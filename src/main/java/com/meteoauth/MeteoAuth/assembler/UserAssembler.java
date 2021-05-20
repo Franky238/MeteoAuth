@@ -3,6 +3,8 @@ package com.meteoauth.MeteoAuth.assembler;
 import com.meteoauth.MeteoAuth.dto.UserDtoRequest;
 import com.meteoauth.MeteoAuth.dto.UserDtoResponse;
 import com.meteoauth.MeteoAuth.entities.User;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -10,11 +12,17 @@ import java.util.List;
 
 @Component
 public class UserAssembler {
+    private final PasswordEncoder passwordEncoder;
+
+    public UserAssembler() {
+        this.passwordEncoder = new BCryptPasswordEncoder();
+    }
+
+
     public UserDtoResponse getUserDtoResponse(User user) {
         UserDtoResponse userDtoResponse = new UserDtoResponse();
         userDtoResponse.setId(user.getId());
-        userDtoResponse.setFname(user.getFname());
-        userDtoResponse.setLname(user.getLname());
+        userDtoResponse.setUsername(user.getUsername());
         userDtoResponse.setEmail(user.getEmail());
         userDtoResponse.setCity(user.getCity());
         return userDtoResponse;
@@ -22,9 +30,8 @@ public class UserAssembler {
 
     public User getUser(UserDtoRequest userDtoRequest) {
         User user = new User();
-        user.setFname(userDtoRequest.getFname());
-        user.setFname(userDtoRequest.getLname());
-        user.setPassword(userDtoRequest.getPassword());
+        user.setUsername(userDtoRequest.getUsername());
+        user.setPassword(passwordEncoder.encode(userDtoRequest.getPassword()));
         user.setEmail(userDtoRequest.getEmail());
         user.setCity(userDtoRequest.getCity());
         return user;
@@ -34,8 +41,7 @@ public class UserAssembler {
         List<UserDtoResponse> userDtoResponseList = new ArrayList<>();
         for (User user : userList) {
             UserDtoResponse temp = new UserDtoResponse();
-            temp.setFname(user.getFname());
-            temp.setLname(user.getLname());
+            temp.setUsername(user.getUsername());
             temp.setEmail(user.getEmail());
             temp.setCity(user.getCity());
             userDtoResponseList.add(temp);

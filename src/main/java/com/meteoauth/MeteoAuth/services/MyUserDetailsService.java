@@ -29,7 +29,7 @@ public class MyUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException { //todo wrong name of the method
-        //   return new User("foo", "foo", new ArrayList<>());
+//           return new User("foo", "foo", new ArrayList<>());
 
         User user = usersRepository.findByEmail(email);
         if (user == null) {

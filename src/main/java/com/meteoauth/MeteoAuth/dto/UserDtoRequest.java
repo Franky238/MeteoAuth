@@ -9,9 +9,7 @@ import javax.validation.constraints.NotBlank;
 @Data
 public class UserDtoRequest {
     @NotBlank
-    public String fname;
-    @NotBlank
-    public String lname;
+    public String username;
     @NotBlank
     public String password; //todo
     @Email

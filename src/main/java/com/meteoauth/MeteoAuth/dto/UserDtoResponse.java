@@ -6,8 +6,7 @@ import lombok.Data;
 @Data
 public class UserDtoResponse {
     public Long id;
-    public String fname;
-    public String lname;
+    public String username;
     public String email;
     public String city;
 }

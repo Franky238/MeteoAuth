@@ -1,5 +1,6 @@
 package com.meteoauth.MeteoAuth.entities;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,6 +21,7 @@ import java.util.Set;
 @Entity
 @Table(name = "tb_user")
 @NoArgsConstructor
+@AllArgsConstructor//added
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "native")
@@ -28,14 +30,10 @@ public class User {
 
     @Basic
     @Column
-    private String fname;
+    private String username;
 
     @Basic
-    @Column
-    private String lname;
-
-    @Basic
-    @Column
+    @Column(unique = true)
     private String email;
 
     @Basic

@@ -21,7 +21,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping({"/api/users"})
+@RequestMapping("/api/users")
 public class UsersController {
 
     private final UsersRepository usersRepository;
@@ -33,7 +33,7 @@ public class UsersController {
         this.userAssembler = userAssembler;
     }
 
-    @PostMapping("/users") //todo delete /users
+    @PostMapping("/register") //todo delete /users
     public UserDtoResponse addUser(@RequestBody @Valid UserDtoRequest userDtoRequest) {
         User user = userAssembler.getUser(userDtoRequest);
         user = usersRepository.save(user);

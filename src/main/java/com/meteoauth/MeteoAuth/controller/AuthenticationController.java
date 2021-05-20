@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping({"/api"})
 public class AuthenticationController {
 
     private AuthenticationManager authenticationManager;
@@ -28,8 +29,6 @@ public class AuthenticationController {
         this.jwtTokenUtil = jwtTokenUtil;
         this.userDetailsService = userDetailsService;
     }
-
-
 
 
     @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
