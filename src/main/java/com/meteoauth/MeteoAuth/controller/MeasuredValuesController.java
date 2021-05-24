@@ -1,20 +1,18 @@
-package com.meteoauth.MeteoAuth.controller;//package com.example.cassandra.springbootclass.controller;
-//
-//import com.example.cassandra.springbootclass.ResouceNotFoundException;
-//import com.example.cassandra.springbootclass.repository.MeasuredValuesRepository;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.http.ResponseEntity;
-//import org.springframework.web.bind.annotation.*;
-//
-//import java.util.List;
-//
-//@RestController
-//@RequestMapping("/api/measured_values")
-//public class MeasuredValuesController {
-//
-//    @Autowired
-//    MeasuredValuesRepository measuredValuesRepository;
-//
+package com.meteoauth.MeteoAuth.controller;
+
+
+import com.meteoauth.MeteoAuth.repository.MeasuredValuesRepository;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/measured_values")
+public class MeasuredValuesController {
+    private final MeasuredValuesRepository measuredValuesRepository;
+
+    public MeasuredValuesController(MeasuredValuesRepository measuredValuesRepository) {
+        this.measuredValuesRepository = measuredValuesRepository;
+    }
+
 //    @PostMapping("/measured_values")
 //    public MeasuredValues addMeasuredValues(@RequestBody MeasuredValues measuredValues) {
 //        measuredValuesRepository.save(measuredValues);
@@ -38,7 +36,7 @@ package com.meteoauth.MeteoAuth.controller;//package com.example.cassandra.sprin
 //                                                               @RequestBody MeasuredValues measuredValuesDetails) {
 //        MeasuredValues measuredValues = measuredValuesRepository.findById(measuredValuesId)
 //                .orElseThrow(() -> new ResouceNotFoundException("Measured values not found for this id :: " + measuredValuesId));
-//        measuredValues.setStation_id(measuredValuesDetails.getStation_id());//todo id => uuid
+//        measuredValues.setStation_id(measuredValuesDetails.getStation_id());
 //        final MeasuredValues updatedMeasuredValues = measuredValuesRepository.save(measuredValues);
 //        return ResponseEntity.ok(updatedMeasuredValues);
 //    }
@@ -50,4 +48,4 @@ package com.meteoauth.MeteoAuth.controller;//package com.example.cassandra.sprin
 //        measuredValuesRepository.delete(measuredValues);
 //        return ResponseEntity.ok().build();
 //    }
-//}
+}

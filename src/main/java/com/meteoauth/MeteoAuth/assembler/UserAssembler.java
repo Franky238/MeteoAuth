@@ -21,7 +21,6 @@ public class UserAssembler {
 
     public UserDtoResponse getUserDtoResponse(User user) {
         UserDtoResponse userDtoResponse = new UserDtoResponse();
-        userDtoResponse.setId(user.getId());
         userDtoResponse.setUsername(user.getUsername());
         userDtoResponse.setEmail(user.getEmail());
         userDtoResponse.setCity(user.getCity());

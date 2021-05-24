@@ -5,14 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Set;
 
@@ -42,7 +35,12 @@ public class User {
 
     @Basic
     @Column
-    private Timestamp registration_time;
+    private Timestamp registration_time = new Timestamp(System.currentTimeMillis());
+    //todo correct way?
+//    @Basic(optional = false)
+//    @Column(name = "LastTouched", insertable = false, updatable = false)
+//    @Temporal(TemporalType.TIMESTAMP)
+//    private Date lastTouched;
 
     @Basic
     @Column

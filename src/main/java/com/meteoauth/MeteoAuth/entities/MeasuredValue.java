@@ -20,7 +20,7 @@ public class MeasuredValue {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "native")
     @Column
-    private Long id; //todo Inteeeger
+    private Long id;
 
     @Basic
     @Column

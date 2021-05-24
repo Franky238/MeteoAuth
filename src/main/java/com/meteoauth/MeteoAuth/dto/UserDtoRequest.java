@@ -8,11 +8,11 @@ import javax.validation.constraints.NotBlank;
 
 @Data
 public class UserDtoRequest {
-    @NotBlank
     public String username;
     @NotBlank
     public String password; //todo
     @Email
+    @NotBlank
     public String email;
     public String city;
 }

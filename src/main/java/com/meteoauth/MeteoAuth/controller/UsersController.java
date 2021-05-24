@@ -8,14 +8,7 @@ import com.meteoauth.MeteoAuth.entities.User;
 import com.meteoauth.MeteoAuth.repository.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -33,42 +26,69 @@ public class UsersController {
         this.userAssembler = userAssembler;
     }
 
-    @PostMapping("/register") //todo delete /users
-    public UserDtoResponse addUser(@RequestBody @Valid UserDtoRequest userDtoRequest) {
-        User user = userAssembler.getUser(userDtoRequest);
-        user = usersRepository.save(user);
-        return userAssembler.getUserDtoResponse(user);
-    }
+    @GetMapping("/{email}")
+    public ResponseEntity<UserDtoResponse> findByEmail(@PathVariable("email") String email) {
+        User user = usersRepository.findByEmail(email);
+        if (user == null) {
+            throw new ResouceNotFoundException("User not found " + email);
+        }
 
-    @GetMapping("/users/{id}")
-    public ResponseEntity<UserDtoResponse> findById(@PathVariable("id") Long userId) {
-        User user = usersRepository.findById(userId).orElseThrow(
-                () -> new ResouceNotFoundException("User not found" + userId));
         return ResponseEntity.ok().body(userAssembler.getUserDtoResponse(user));
     }
+//    @GetMapping("/{id}")
+//    public ResponseEntity<UserDtoResponse> findById(@PathVariable("id") Long userId) {
+//        User user = usersRepository.findById(userId).orElseThrow(
+//                () -> new ResouceNotFoundException("User not found" + userId));
+//        return ResponseEntity.ok().body(userAssembler.getUserDtoResponse(user));
+//    }
 
-    @GetMapping({"/users"})
-    public  ResponseEntity<List<UserDtoResponse>> getUsers() {
+    @GetMapping("")
+    public ResponseEntity<List<UserDtoResponse>> getUsers() {
         Iterable<User> userList = usersRepository.findAll();
         return ResponseEntity.ok().body(userAssembler.getUserDtoRequestList(userList));
     }
 
-    @PutMapping("users/{id}")
-    public ResponseEntity<UserDtoResponse> updateUser(@PathVariable(value = "id") Long userId,
-                                                      @RequestBody UserDtoRequest userDtoRequest) {
-        User user = usersRepository.findById(userId)
-                .orElseThrow(() -> new ResouceNotFoundException("User not found for this id :: " + userId));
-        user.setEmail(userDtoRequest.getEmail());
+    @PutMapping("{email}")
+    public ResponseEntity<UserDtoResponse> updateUser(@PathVariable("email") String email,
+                                                      @RequestBody @Valid UserDtoRequest userDtoRequest) {
+        User user = usersRepository.findByEmail(email);
+        if (user == null) {
+            throw new ResouceNotFoundException("User not found for this email :: " + email);
+        }
+        User newUser =  userAssembler.getUser(userDtoRequest);
+        if(newUser.getUsername() != null ||!newUser.getUsername().isEmpty() ){
+            user.setUsername(newUser.getUsername());
+        }
+        if(!newUser.getPassword().isEmpty()){ //todo not working
+            user.setPassword(newUser.getPassword());
+        }
+        if (!newUser.getEmail().isEmpty()) {
+            user.setEmail(newUser.getEmail());
+        }
+        if(!newUser.getCity().isEmpty()){
+            user.setCity(newUser.getCity());
+        }
+
         usersRepository.save(user);
         return ResponseEntity.ok(userAssembler.getUserDtoResponse(user));
     }
+//    @PutMapping("{id}")
+//    public ResponseEntity<UserDtoResponse> updateUser(@PathVariable(value = "id") Long userId,
+//                                                      @RequestBody UserDtoRequest userDtoRequest) {
+//        User user = usersRepository.findById(userId)
+//                .orElseThrow(() -> new ResouceNotFoundException("User not found for this id :: " + userId));
+//        user.setEmail(userDtoRequest.getEmail());
+//        usersRepository.save(user);
+//        return ResponseEntity.ok(userAssembler.getUserDtoResponse(user));
+//    }
 
-    @DeleteMapping("users/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable(value = "id") Long userId) {
-        User userValues = usersRepository.findById(userId).orElseThrow(
-                () -> new ResouceNotFoundException("User not found::: " + userId));
-        usersRepository.delete(userValues);
+    @DeleteMapping("{email}")
+    public ResponseEntity<Void> deleteUser(@PathVariable("email") String email) {
+        User user = usersRepository.findByEmail(email);
+        if (user == null) {
+            throw new ResouceNotFoundException("User not found for this email :: " + email);
+        }
+        usersRepository.delete(user);
         return ResponseEntity.ok().build();
     }
-
 }

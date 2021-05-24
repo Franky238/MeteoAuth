@@ -1,23 +1,50 @@
-package com.meteoauth.MeteoAuth.assembler;//package com.example.cassandra.springbootclass.assembler;
-//
-//import com.example.cassandra.springbootclass.dto.StationsDtoRequest;
-//
-//public class StationsAssembler {
-//    public static Stations toEntity(StationsDtoRequest dto) {
-//        Stations station = new Stations();
-//        station.setDestination(dto.getDestination());
-//        station.setPhone(dto.getPhone());
-//        station.setModel_description(dto.getModel_description());
-//        station.setRegistration_time(dto.getRegistration_time());
-//        return station;
-//    }
-//
-//    public static StationsDtoRequest toDto(Stations entity) {
-//        StationsDtoRequest dto = new StationsDtoRequest();
-//        dto.setDestination(entity.getDestination());
-//        dto.setPhone(entity.getPhone());
-//        dto.setModel_description(entity.getModel_description());
-//        dto.setRegistration_time(entity.getRegistration_time());
-//        return dto;
-//    }
-//}
+package com.meteoauth.MeteoAuth.assembler;
+
+import com.meteoauth.MeteoAuth.dto.StationDtoRequest;
+import com.meteoauth.MeteoAuth.dto.StationsDtoResponse;
+
+import com.meteoauth.MeteoAuth.entities.Station;
+
+import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Component
+public class StationsAssembler {
+    public StationsDtoResponse getStationDtoResponse(Station station) {
+        StationsDtoResponse stationsDtoResponse = new StationsDtoResponse();
+        stationsDtoResponse.setDestination(station.getDestination());
+        stationsDtoResponse.setModel_description(station.getModel_description());
+        stationsDtoResponse.setPhone(station.getPhone());
+        stationsDtoResponse.setRegistration_time(station.getRegistration_time());
+        stationsDtoResponse.setTitle(station.getTitle());
+        return stationsDtoResponse;
+    }
+
+    public Station getStation(StationDtoRequest stationDtoRequest) {
+        Station station = new Station();
+        station.setDestination(stationDtoRequest.getDestination());
+        station.setModel_description(stationDtoRequest.getModel_description());
+        station.setPhone(stationDtoRequest.getPhone());
+        station.setRegistration_time(stationDtoRequest.getRegistration_time());
+        station.setTitle(stationDtoRequest.getTitle());
+
+        return station;
+    }
+
+    public List<StationsDtoResponse> getStationDtoRequestList(Iterable<Station> stationList) {
+        List<StationsDtoResponse> stationsDtoResponses = new ArrayList<>();
+        for (Station station : stationList) {
+            StationsDtoResponse temp = new StationsDtoResponse();
+            temp.setDestination(station.getDestination());
+            temp.setModel_description(station.getModel_description());
+            temp.setPhone(station.getPhone());
+            temp.setRegistration_time(station.getRegistration_time());
+            temp.setTitle(station.getTitle());
+            stationsDtoResponses.add(temp);
+        }
+        return stationsDtoResponses;
+    }
+
+}

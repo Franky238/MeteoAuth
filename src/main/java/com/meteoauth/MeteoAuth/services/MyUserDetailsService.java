@@ -14,9 +14,6 @@ import java.util.ArrayList;
 @Service
 public class MyUserDetailsService implements UserDetailsService {
 
-    // @Autowired
-    //  private UsersRepository usersRepository;
-
     private final UsersRepository usersRepository;
     private final UserAssembler userAssembler;
 
@@ -29,15 +26,11 @@ public class MyUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException { //todo wrong name of the method
-//           return new User("foo", "foo", new ArrayList<>());
-
         User user = usersRepository.findByEmail(email);
         if (user == null) {
             throw new UsernameNotFoundException("User not found!");
         }
         return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), new ArrayList<>());  //userAssembler.getUserDtoResponse(user);
 
-        //UsersController usersController = new UsersController();
-        //usersController.getUserByEmail()
     }
 }

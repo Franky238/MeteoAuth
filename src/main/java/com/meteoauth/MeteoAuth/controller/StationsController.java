@@ -1,19 +1,23 @@
-package com.meteoauth.MeteoAuth.controller;//package com.example.cassandra.springbootclass.controller;
-//
-//
-//import com.example.cassandra.springbootclass.ResouceNotFoundException;
-//import com.example.cassandra.springbootclass.repository.StationsRepository;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.http.ResponseEntity;
-//import org.springframework.web.bind.annotation.*;
-//
-//import java.util.List;
-//
-//@RestController
-//@RequestMapping("/api/stations")
-//public class StationsController {
-//    @Autowired
-//    StationsRepository stationsRepository;
+package com.meteoauth.MeteoAuth.controller;
+
+import com.meteoauth.MeteoAuth.assembler.StationsAssembler;
+import com.meteoauth.MeteoAuth.repository.StationsRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/stations")
+public class StationsController {
+
+    private final StationsRepository stationsRepository;
+    private final StationsAssembler stationsAssembler;
+
+    @Autowired
+    public StationsController(StationsRepository stationsRepository, StationsAssembler stationsAssembler) {
+        this.stationsRepository = stationsRepository;
+        this.stationsAssembler = stationsAssembler;
+    }
 //
 //    @PostMapping("/stations")
 //    public Stations addStations(@RequestBody Stations stations) {
@@ -50,4 +54,4 @@ package com.meteoauth.MeteoAuth.controller;//package com.example.cassandra.sprin
 //        stationsRepository.delete(stationValues);
 //        return ResponseEntity.ok().build();
 //    }
-//}
+}

@@ -1,31 +1,57 @@
-package com.meteoauth.MeteoAuth.assembler;//package com.example.cassandra.springbootclass.assembler;
-//
-//import com.example.cassandra.springbootclass.dto.MeasuredValuesDtoRequest;
-//
-//public class MeasuredValuesAssembler {
-//    public static MeasuredValues toEntity(MeasuredValuesDtoRequest dto) {
-//        MeasuredValues measuredValues = new MeasuredValues();
-//        measuredValues.setHumidity(dto.getHumidity());
-//        measuredValues.setMeasurement_time(dto.getMeasurement_time());
-//        measuredValues.setRainfall(dto.getRainfall());
-//        measuredValues.setAir_quality(dto.getAir_quality());
-//        measuredValues.setTemperature(dto.getTemperature());
-//        measuredValues.setWind_direction(dto.getWind_direction());
-//        measuredValues.setWind_gusts(dto.getWind_gusts());
-//        measuredValues.setWind_speed(dto.getWind_speed());
-//        return measuredValues;
-//    }
-//
-//    public static MeasuredValuesDtoRequest toDto(MeasuredValues measuredValues) {
-//        MeasuredValuesDtoRequest dto = new MeasuredValuesDtoRequest();
-//        dto.setHumidity(measuredValues.getHumidity());
-//        dto.setMeasurement_time(measuredValues.getMeasurement_time());
-//        dto.setRainfall(measuredValues.getRainfall());
-//        dto.setTemperature(measuredValues.getTemperature());
-//        dto.setAir_quality(measuredValues.getAir_quality());
-//        dto.setWind_direction(measuredValues.getWind_direction());
-//        dto.setWind_gusts(measuredValues.getWind_gusts());
-//        dto.setWind_speed(measuredValues.getWind_speed());
-//        return dto;
-//    }
-//}
+package com.meteoauth.MeteoAuth.assembler;
+
+
+import com.meteoauth.MeteoAuth.dto.MeasuredValuesDtoRequest;
+import com.meteoauth.MeteoAuth.dto.MeasuredValuesDtoResponse;
+import com.meteoauth.MeteoAuth.entities.MeasuredValue;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class MeasuredValuesAssembler {
+
+    public MeasuredValuesDtoResponse getUserDtoResponse(MeasuredValue measuredValue) {
+        MeasuredValuesDtoResponse measuredValuesDtoResponse = new MeasuredValuesDtoResponse();
+        measuredValuesDtoResponse.setMeasurement_time(measuredValue.getMeasurement_time());
+        measuredValuesDtoResponse.setHumidity(measuredValue.getHumidity());
+        measuredValuesDtoResponse.setTemperature(measuredValue.getTemperature());
+        measuredValuesDtoResponse.setAir_quality(measuredValue.getAir_quality());
+        measuredValuesDtoResponse.setWind_speed(measuredValue.getWind_speed());
+        measuredValuesDtoResponse.setWind_gusts(measuredValue.getWind_gusts());
+        measuredValuesDtoResponse.setWind_direction(measuredValue.getWind_direction());
+        measuredValuesDtoResponse.setRainfall(measuredValue.getRainfall());
+        return measuredValuesDtoResponse;
+    }
+
+    public MeasuredValue getUser(MeasuredValuesDtoRequest measuredValuesDtoRequest) {
+        MeasuredValue measuredValue = new MeasuredValue();
+        measuredValue.setMeasurement_time(measuredValuesDtoRequest.getMeasurement_time());
+        measuredValue.setHumidity(measuredValuesDtoRequest.getHumidity());
+        measuredValue.setTemperature(measuredValuesDtoRequest.getTemperature());
+        measuredValue.setAir_quality(measuredValuesDtoRequest.getAir_quality());
+        measuredValue.setWind_speed(measuredValuesDtoRequest.getWind_speed());
+        measuredValue.setWind_gusts(measuredValuesDtoRequest.getWind_gusts());
+        measuredValue.setWind_direction(measuredValuesDtoRequest.getWind_direction());
+        measuredValue.setRainfall(measuredValuesDtoRequest.getRainfall());
+
+        return measuredValue;
+    }
+
+    public List<MeasuredValuesDtoResponse> getUserDtoRequestList(Iterable<MeasuredValue> measuredValuesList) {
+
+        List<MeasuredValuesDtoResponse> measuredValuesDtoResponses = new ArrayList<>();
+        for (MeasuredValue measuredValue : measuredValuesList) {
+            MeasuredValuesDtoResponse temp = new MeasuredValuesDtoResponse();
+            temp.setMeasurement_time(measuredValue.getMeasurement_time());
+            temp.setHumidity(measuredValue.getHumidity());
+            temp.setTemperature(measuredValue.getTemperature());
+            temp.setAir_quality(measuredValue.getAir_quality());
+            temp.setWind_speed(measuredValue.getWind_speed());
+            temp.setWind_gusts(measuredValue.getWind_gusts());
+            temp.setWind_direction(measuredValue.getWind_direction());
+            temp.setRainfall(measuredValue.getRainfall());
+            measuredValuesDtoResponses.add(temp);
+        }
+        return measuredValuesDtoResponses;
+    }
+}
