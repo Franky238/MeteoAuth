@@ -24,7 +24,7 @@ public class MeasuredValue {
 
     @Basic
     @Column
-    private Timestamp measurement_time;
+    private Timestamp measurementTime;
 
     @Basic
     @Column
@@ -53,6 +53,5 @@ public class MeasuredValue {
     @Basic
     @Column
     private Integer rainfall;
-
 
 }

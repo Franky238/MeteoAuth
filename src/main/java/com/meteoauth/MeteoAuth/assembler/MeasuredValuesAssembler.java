@@ -4,15 +4,17 @@ package com.meteoauth.MeteoAuth.assembler;
 import com.meteoauth.MeteoAuth.dto.MeasuredValuesDtoRequest;
 import com.meteoauth.MeteoAuth.dto.MeasuredValuesDtoResponse;
 import com.meteoauth.MeteoAuth.entities.MeasuredValue;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class MeasuredValuesAssembler {
 
-    public MeasuredValuesDtoResponse getUserDtoResponse(MeasuredValue measuredValue) {
+    public MeasuredValuesDtoResponse getMeasuredValuesDtoResponse(MeasuredValue measuredValue) {
         MeasuredValuesDtoResponse measuredValuesDtoResponse = new MeasuredValuesDtoResponse();
-        measuredValuesDtoResponse.setMeasurement_time(measuredValue.getMeasurement_time());
+        measuredValuesDtoResponse.setMeasurement_time(measuredValue.getMeasurementTime());
         measuredValuesDtoResponse.setHumidity(measuredValue.getHumidity());
         measuredValuesDtoResponse.setTemperature(measuredValue.getTemperature());
         measuredValuesDtoResponse.setAir_quality(measuredValue.getAir_quality());
@@ -23,9 +25,9 @@ public class MeasuredValuesAssembler {
         return measuredValuesDtoResponse;
     }
 
-    public MeasuredValue getUser(MeasuredValuesDtoRequest measuredValuesDtoRequest) {
+    public MeasuredValue getMeasuredValues(MeasuredValuesDtoRequest measuredValuesDtoRequest) {
         MeasuredValue measuredValue = new MeasuredValue();
-        measuredValue.setMeasurement_time(measuredValuesDtoRequest.getMeasurement_time());
+        measuredValue.setMeasurementTime(measuredValuesDtoRequest.getMeasurement_time());
         measuredValue.setHumidity(measuredValuesDtoRequest.getHumidity());
         measuredValue.setTemperature(measuredValuesDtoRequest.getTemperature());
         measuredValue.setAir_quality(measuredValuesDtoRequest.getAir_quality());
@@ -37,12 +39,12 @@ public class MeasuredValuesAssembler {
         return measuredValue;
     }
 
-    public List<MeasuredValuesDtoResponse> getUserDtoRequestList(Iterable<MeasuredValue> measuredValuesList) {
+    public List<MeasuredValuesDtoResponse> getMeasuredValuesDtoRequestList(Iterable<MeasuredValue> measuredValuesList) {
 
         List<MeasuredValuesDtoResponse> measuredValuesDtoResponses = new ArrayList<>();
         for (MeasuredValue measuredValue : measuredValuesList) {
             MeasuredValuesDtoResponse temp = new MeasuredValuesDtoResponse();
-            temp.setMeasurement_time(measuredValue.getMeasurement_time());
+            temp.setMeasurement_time(measuredValue.getMeasurementTime());
             temp.setHumidity(measuredValue.getHumidity());
             temp.setTemperature(measuredValue.getTemperature());
             temp.setAir_quality(measuredValue.getAir_quality());

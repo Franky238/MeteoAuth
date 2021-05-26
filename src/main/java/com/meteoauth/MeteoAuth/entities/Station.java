@@ -1,34 +1,29 @@
 package com.meteoauth.MeteoAuth.entities;
 
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.sql.Timestamp;
+
 
 @Getter
 @Setter
 @Entity
 @Table(name = "tb_station")
+@NoArgsConstructor
+@AllArgsConstructor//added
 public class Station {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "native")
     @Column
     private Long id;
 
-
     @Basic
-    @Column
+    @Column(unique = true)
     private String title;
 
     @Basic
@@ -41,13 +36,13 @@ public class Station {
 
     @Basic
     @Column
-    private Timestamp registration_time;
+    private Timestamp registration_time = new Timestamp(System.currentTimeMillis());
 
     @Basic
     @Column
     private String phone;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 }
