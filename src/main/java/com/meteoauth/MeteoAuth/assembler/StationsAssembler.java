@@ -4,7 +4,6 @@ import com.meteoauth.MeteoAuth.dto.StationDtoRequest;
 import com.meteoauth.MeteoAuth.dto.StationsDtoResponse;
 import com.meteoauth.MeteoAuth.entities.Station;
 import com.meteoauth.MeteoAuth.repository.UsersRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -12,11 +11,9 @@ import java.util.List;
 
 @Component
 public class StationsAssembler {
-
     private final UsersRepository usersRepository;
     private final UserAssembler userAssembler;
 
-    @Autowired
     public StationsAssembler(UsersRepository usersRepository, UserAssembler userAssembler) {
         this.usersRepository = usersRepository;
         this.userAssembler = userAssembler;
@@ -33,13 +30,13 @@ public class StationsAssembler {
         return stationsDtoResponse;
     }
 
-    public Station getStation(StationDtoRequest stationDtoRequest) {
+    public Station createStation(StationDtoRequest stationDtoRequest, String email) {
         Station station = new Station();
         station.setDestination(stationDtoRequest.getDestination());
         station.setModel_description(stationDtoRequest.getModel_description());
         station.setPhone(stationDtoRequest.getPhone());
         station.setTitle(stationDtoRequest.getTitle());
-        station.setUser(usersRepository.findByEmail(stationDtoRequest.getEmail()));
+        station.setUser(usersRepository.findByEmail(email));
         return station;
     }
 

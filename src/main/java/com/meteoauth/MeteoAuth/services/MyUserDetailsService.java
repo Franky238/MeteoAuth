@@ -3,7 +3,6 @@ package com.meteoauth.MeteoAuth.services;
 import com.meteoauth.MeteoAuth.assembler.UserAssembler;
 import com.meteoauth.MeteoAuth.entities.User;
 import com.meteoauth.MeteoAuth.repository.UsersRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -13,11 +12,9 @@ import java.util.ArrayList;
 
 @Service
 public class MyUserDetailsService implements UserDetailsService {
-
     private final UsersRepository usersRepository;
     private final UserAssembler userAssembler;
 
-    @Autowired
     public MyUserDetailsService(UsersRepository usersRepository, UserAssembler userAssembler) {
         this.usersRepository = usersRepository;
         this.userAssembler = userAssembler;

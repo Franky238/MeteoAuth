@@ -13,11 +13,21 @@ import java.util.function.Function;
 
 @Service
 public class JwtUtil {
-    private final String SECRET_KEY = "janosec";
+    private final String SECRET_KEY = "amFub3NlYw==";
 
-    public String extractUsername(String token) {
+    public String extractEmail(String token) {
+        if (token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
         return extractClaim(token, Claims::getSubject);
     }
+
+//    public String extractStationID(String token) {
+//        if (token.startsWith("Bearer ")) {
+//            token = token.substring(7);
+//        }
+//        return extractClaim(token, Claims::getId);
+//    }
 
     public Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
@@ -36,10 +46,16 @@ public class JwtUtil {
         return extractExpiration(token).before(new Date());
     }
 
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(UserDetails userDetails) {// todo roles
         Map<String, Object> claims = new HashMap<>();
         return createToken(claims, userDetails.getUsername());
     }
+
+//    public String generateToken(UserDetails userDetails, String stationID) {// todo roles
+//        Map<String, Object> claims = new HashMap<>();
+//        claims.put("stationID", stationID);
+//        return createToken(claims, userDetails.getUsername());
+//    }
 
     private String createToken(Map<String, Object> claims, String subject) {
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
@@ -48,7 +64,9 @@ public class JwtUtil {
     }
 
     public Boolean validateToken(String token, UserDetails userDetails) {
-        final String username = extractUsername(token);
+        final String username = extractEmail(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
+
+
 }

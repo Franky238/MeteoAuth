@@ -4,6 +4,7 @@ package com.meteoauth.MeteoAuth.assembler;
 import com.meteoauth.MeteoAuth.dto.MeasuredValuesDtoRequest;
 import com.meteoauth.MeteoAuth.dto.MeasuredValuesDtoResponse;
 import com.meteoauth.MeteoAuth.entities.MeasuredValue;
+import com.meteoauth.MeteoAuth.repository.StationsRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -11,6 +12,14 @@ import java.util.List;
 
 @Component
 public class MeasuredValuesAssembler {
+    private final StationsAssembler stationsAssembler;
+    private final StationsRepository stationsRepository;
+
+    public MeasuredValuesAssembler(StationsAssembler stationsAssembler, StationsRepository stationsRepository) {
+        this.stationsAssembler = stationsAssembler;
+        this.stationsRepository = stationsRepository;
+    }
+
 
     public MeasuredValuesDtoResponse getMeasuredValuesDtoResponse(MeasuredValue measuredValue) {
         MeasuredValuesDtoResponse measuredValuesDtoResponse = new MeasuredValuesDtoResponse();
@@ -25,7 +34,7 @@ public class MeasuredValuesAssembler {
         return measuredValuesDtoResponse;
     }
 
-    public MeasuredValue getMeasuredValues(MeasuredValuesDtoRequest measuredValuesDtoRequest) {
+    public MeasuredValue createMeasuredValues(MeasuredValuesDtoRequest measuredValuesDtoRequest, String stationTitle) {
         MeasuredValue measuredValue = new MeasuredValue();
         measuredValue.setMeasurementTime(measuredValuesDtoRequest.getMeasurement_time());
         measuredValue.setHumidity(measuredValuesDtoRequest.getHumidity());
@@ -35,6 +44,7 @@ public class MeasuredValuesAssembler {
         measuredValue.setWind_gusts(measuredValuesDtoRequest.getWind_gusts());
         measuredValue.setWind_direction(measuredValuesDtoRequest.getWind_direction());
         measuredValue.setRainfall(measuredValuesDtoRequest.getRainfall());
+        measuredValue.setStation(stationsRepository.findByTitle(stationTitle));
 
         return measuredValue;
     }

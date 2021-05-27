@@ -9,7 +9,6 @@ import com.meteoauth.MeteoAuth.entities.User;
 import com.meteoauth.MeteoAuth.repository.UsersRepository;
 import com.meteoauth.MeteoAuth.services.JwtUtil;
 import com.meteoauth.MeteoAuth.services.MyUserDetailsService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -29,7 +28,6 @@ public class AuthenticationController {
     private final UserAssembler userAssembler;
     private final UsersRepository usersRepository;
 
-    @Autowired
     public AuthenticationController(AuthenticationManager authenticationManager, JwtUtil jwtTokenUtil, MyUserDetailsService userDetailsService, UserAssembler userAssembler, UsersRepository usersRepository) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenUtil = jwtTokenUtil;
@@ -37,7 +35,6 @@ public class AuthenticationController {
         this.userAssembler = userAssembler;
         this.usersRepository = usersRepository;
     }
-
 
     @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
@@ -50,7 +47,6 @@ public class AuthenticationController {
         catch (BadCredentialsException e) {
             throw new Exception("Incorrect username or password", e);
         }
-
 
         final UserDetails userDetails = userDetailsService
                 .loadUserByUsername(authenticationRequest.getUsername());

@@ -6,7 +6,7 @@ import com.meteoauth.MeteoAuth.dto.StationDtoRequest;
 import com.meteoauth.MeteoAuth.dto.StationsDtoResponse;
 import com.meteoauth.MeteoAuth.entities.Station;
 import com.meteoauth.MeteoAuth.repository.StationsRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.meteoauth.MeteoAuth.services.JwtUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,19 +16,20 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/stations")
 public class StationsController {
-
     private final StationsRepository stationsRepository;
     private final StationsAssembler stationsAssembler;
+    private final JwtUtil jwtUtil;
 
-    @Autowired
-    public StationsController(StationsRepository stationsRepository, StationsAssembler stationsAssembler) {
+    public StationsController(StationsRepository stationsRepository, StationsAssembler stationsAssembler, JwtUtil jwtUtil) {
         this.stationsRepository = stationsRepository;
         this.stationsAssembler = stationsAssembler;
+        this.jwtUtil = jwtUtil;
     }
 
-    @PostMapping("/add")
-    public StationsDtoResponse addStation(@RequestBody @Valid StationDtoRequest stationDtoRequest) {
-        Station station = stationsAssembler.getStation(stationDtoRequest);
+    @PostMapping("/add")//todo add->create
+    public StationsDtoResponse createStation(@RequestBody @Valid StationDtoRequest stationDtoRequest, @RequestHeader(name = "Authorization") String token) {
+        String email = jwtUtil.extractEmail(token);
+        Station station = stationsAssembler.createStation(stationDtoRequest, email);
         station = stationsRepository.save(station);
         return stationsAssembler.getStationDtoResponse(station);
     }

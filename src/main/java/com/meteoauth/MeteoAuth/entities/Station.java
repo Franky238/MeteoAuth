@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.Set;
 
 
 @Getter
@@ -45,4 +46,7 @@ public class Station {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @OneToMany(mappedBy = "tb_station")
+    private Set<MeasuredValue> measuredValues;
 }

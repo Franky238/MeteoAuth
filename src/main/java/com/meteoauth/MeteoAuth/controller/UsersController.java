@@ -6,7 +6,6 @@ import com.meteoauth.MeteoAuth.dto.UserDtoRequest;
 import com.meteoauth.MeteoAuth.dto.UserDtoResponse;
 import com.meteoauth.MeteoAuth.entities.User;
 import com.meteoauth.MeteoAuth.repository.UsersRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,11 +15,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/users")
 public class UsersController {
-
     private final UsersRepository usersRepository;
     private final UserAssembler userAssembler;
 
-    @Autowired
     public UsersController(UsersRepository usersRepository, UserAssembler userAssembler) {
         this.usersRepository = usersRepository;
         this.userAssembler = userAssembler;

@@ -36,17 +36,16 @@ public class User {
     @Basic
     @Column
     private Timestamp registration_time = new Timestamp(System.currentTimeMillis());
-    //todo correct way?
-//    @Basic(optional = false)
-//    @Column(name = "LastTouched", insertable = false, updatable = false)
-//    @Temporal(TemporalType.TIMESTAMP)
-//    private Date lastTouched;
+    //  todo correct way?
+    //    @Basic(optional = false)
+    //    @Column(name = "LastTouched", insertable = false, updatable = false)
+    //    @Temporal(TemporalType.TIMESTAMP)
+    //    private Date lastTouched;
 
     @Basic
     @Column
     private String city;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "tb_user")
     private Set<Station> stations;
-
 }

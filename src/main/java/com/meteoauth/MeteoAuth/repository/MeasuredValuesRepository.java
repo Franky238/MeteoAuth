@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MeasuredValuesRepository extends JpaRepository<MeasuredValue, Long> {
-    MeasuredValue findByMeasurementTime(String time);
+
 }
 
 
