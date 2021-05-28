@@ -18,7 +18,7 @@ public class MeasuredValue {
 
     @Basic
     @Column
-    private Timestamp measurementTime;
+    private Timestamp measurementTime = new Timestamp(System.currentTimeMillis());
 
     @Basic
     @Column
@@ -49,6 +49,6 @@ public class MeasuredValue {
     private Integer rainfall;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "station_id", nullable = false)
+    @JoinColumn(name = "station_id", nullable = false) //todo only id?
     private Station station;
 }

@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.Collection;
 import java.util.Set;
 
 @Getter
@@ -46,6 +47,24 @@ public class User {
     @Column
     private String city;
 
-    @OneToMany(mappedBy = "tb_user")
+    @Basic
+    @Column
+    private boolean enabled;
+
+    @Basic
+    @Column
+    private boolean tokenExpired; //todo necessarily?
+
+    @OneToMany(mappedBy = "user")
     private Set<Station> stations;
+
+
+    @ManyToMany
+    @JoinTable(
+            name = "users_roles",
+            joinColumns = @JoinColumn(
+                    name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(
+                    name = "role_id", referencedColumnName = "id"))
+    private Collection<Role> roles;
 }

@@ -5,7 +5,7 @@ import com.meteoauth.MeteoAuth.assembler.UserAssembler;
 import com.meteoauth.MeteoAuth.dto.UserDtoRequest;
 import com.meteoauth.MeteoAuth.dto.UserDtoResponse;
 import com.meteoauth.MeteoAuth.entities.User;
-import com.meteoauth.MeteoAuth.repository.UsersRepository;
+import com.meteoauth.MeteoAuth.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,17 +15,17 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/users")
 public class UsersController {
-    private final UsersRepository usersRepository;
+    private final UserRepository userRepository;
     private final UserAssembler userAssembler;
 
-    public UsersController(UsersRepository usersRepository, UserAssembler userAssembler) {
-        this.usersRepository = usersRepository;
+    public UsersController(UserRepository userRepository, UserAssembler userAssembler) {
+        this.userRepository = userRepository;
         this.userAssembler = userAssembler;
     }
 
     @GetMapping("/{email}")
     public ResponseEntity<UserDtoResponse> findByEmail(@PathVariable("email") String email) {
-        User user = usersRepository.findByEmail(email);
+        User user = userRepository.findByEmail(email);
         if (user == null) {
             throw new ResouceNotFoundException("User not found " + email);
         }
@@ -41,14 +41,14 @@ public class UsersController {
 
     @GetMapping("")
     public ResponseEntity<List<UserDtoResponse>> getUsers() {
-        Iterable<User> userList = usersRepository.findAll();
+        Iterable<User> userList = userRepository.findAll();
         return ResponseEntity.ok().body(userAssembler.getUserDtoRequestList(userList));
     }
 
     @PutMapping("{email}")
     public ResponseEntity<UserDtoResponse> updateUser(@PathVariable("email") String email,
                                                       @RequestBody @Valid UserDtoRequest userDtoRequest) {
-        User user = usersRepository.findByEmail(email);
+        User user = userRepository.findByEmail(email);
         if (user == null) {
             throw new ResouceNotFoundException("User not found for this email :: " + email);
         }
@@ -66,7 +66,7 @@ public class UsersController {
             user.setCity(newUser.getCity());
         }
 
-        usersRepository.save(user);
+        userRepository.save(user);
         return ResponseEntity.ok(userAssembler.getUserDtoResponse(user));
     }
 //    @PutMapping("{id}")
@@ -81,11 +81,11 @@ public class UsersController {
 
     @DeleteMapping("{email}")
     public ResponseEntity<Void> deleteUser(@PathVariable("email") String email) {
-        User user = usersRepository.findByEmail(email);
+        User user = userRepository.findByEmail(email);
         if (user == null) {
             throw new ResouceNotFoundException("User not found for this email :: " + email);
         }
-        usersRepository.delete(user);
+        userRepository.delete(user);
         return ResponseEntity.ok().build();
     }
 }

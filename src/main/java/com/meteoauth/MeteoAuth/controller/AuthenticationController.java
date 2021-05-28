@@ -6,7 +6,7 @@ import com.meteoauth.MeteoAuth.dto.AuthenticationResponse;
 import com.meteoauth.MeteoAuth.dto.UserDtoRequest;
 import com.meteoauth.MeteoAuth.dto.UserDtoResponse;
 import com.meteoauth.MeteoAuth.entities.User;
-import com.meteoauth.MeteoAuth.repository.UsersRepository;
+import com.meteoauth.MeteoAuth.repository.UserRepository;
 import com.meteoauth.MeteoAuth.services.JwtUtil;
 import com.meteoauth.MeteoAuth.services.MyUserDetailsService;
 import org.springframework.http.ResponseEntity;
@@ -26,14 +26,14 @@ public class AuthenticationController {
     private final JwtUtil jwtTokenUtil;
     private final MyUserDetailsService userDetailsService;
     private final UserAssembler userAssembler;
-    private final UsersRepository usersRepository;
+    private final UserRepository userRepository;
 
-    public AuthenticationController(AuthenticationManager authenticationManager, JwtUtil jwtTokenUtil, MyUserDetailsService userDetailsService, UserAssembler userAssembler, UsersRepository usersRepository) {
+    public AuthenticationController(AuthenticationManager authenticationManager, JwtUtil jwtTokenUtil, MyUserDetailsService userDetailsService, UserAssembler userAssembler, UserRepository userRepository) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenUtil = jwtTokenUtil;
         this.userDetailsService = userDetailsService;
         this.userAssembler = userAssembler;
-        this.usersRepository = usersRepository;
+        this.userRepository = userRepository;
     }
 
     @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
@@ -59,7 +59,7 @@ public class AuthenticationController {
     @PostMapping("/register")
     public UserDtoResponse addUser(@RequestBody @Valid UserDtoRequest userDtoRequest) {
         User user = userAssembler.getUser(userDtoRequest);
-        user = usersRepository.save(user);
+        user = userRepository.save(user);
         return userAssembler.getUserDtoResponse(user);
     }
 

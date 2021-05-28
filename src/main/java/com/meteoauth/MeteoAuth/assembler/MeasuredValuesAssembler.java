@@ -1,6 +1,5 @@
 package com.meteoauth.MeteoAuth.assembler;
 
-
 import com.meteoauth.MeteoAuth.dto.MeasuredValuesDtoRequest;
 import com.meteoauth.MeteoAuth.dto.MeasuredValuesDtoResponse;
 import com.meteoauth.MeteoAuth.entities.MeasuredValue;
@@ -36,7 +35,6 @@ public class MeasuredValuesAssembler {
 
     public MeasuredValue createMeasuredValues(MeasuredValuesDtoRequest measuredValuesDtoRequest, String stationTitle) {
         MeasuredValue measuredValue = new MeasuredValue();
-        measuredValue.setMeasurementTime(measuredValuesDtoRequest.getMeasurement_time());
         measuredValue.setHumidity(measuredValuesDtoRequest.getHumidity());
         measuredValue.setTemperature(measuredValuesDtoRequest.getTemperature());
         measuredValue.setAir_quality(measuredValuesDtoRequest.getAir_quality());

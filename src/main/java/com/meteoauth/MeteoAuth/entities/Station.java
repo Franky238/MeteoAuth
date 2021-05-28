@@ -47,6 +47,6 @@ public class Station {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @OneToMany(mappedBy = "tb_station")
+    @OneToMany(mappedBy = "station")
     private Set<MeasuredValue> measuredValues;
 }

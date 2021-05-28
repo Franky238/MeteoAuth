@@ -3,7 +3,7 @@ package com.meteoauth.MeteoAuth.assembler;
 import com.meteoauth.MeteoAuth.dto.StationDtoRequest;
 import com.meteoauth.MeteoAuth.dto.StationsDtoResponse;
 import com.meteoauth.MeteoAuth.entities.Station;
-import com.meteoauth.MeteoAuth.repository.UsersRepository;
+import com.meteoauth.MeteoAuth.repository.UserRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -11,11 +11,11 @@ import java.util.List;
 
 @Component
 public class StationsAssembler {
-    private final UsersRepository usersRepository;
+    private final UserRepository userRepository;
     private final UserAssembler userAssembler;
 
-    public StationsAssembler(UsersRepository usersRepository, UserAssembler userAssembler) {
-        this.usersRepository = usersRepository;
+    public StationsAssembler(UserRepository userRepository, UserAssembler userAssembler) {
+        this.userRepository = userRepository;
         this.userAssembler = userAssembler;
     }
 
@@ -36,7 +36,7 @@ public class StationsAssembler {
         station.setModel_description(stationDtoRequest.getModel_description());
         station.setPhone(stationDtoRequest.getPhone());
         station.setTitle(stationDtoRequest.getTitle());
-        station.setUser(usersRepository.findByEmail(email));
+        station.setUser(userRepository.findByEmail(email));
         return station;
     }
 
@@ -49,6 +49,7 @@ public class StationsAssembler {
             temp.setPhone(station.getPhone());
             temp.setRegistration_time(station.getRegistration_time());
             temp.setTitle(station.getTitle());
+            //todo userDtoResponse
             stationsDtoResponses.add(temp);
         }
         return stationsDtoResponses;

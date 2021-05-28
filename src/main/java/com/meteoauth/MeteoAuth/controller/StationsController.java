@@ -6,6 +6,7 @@ import com.meteoauth.MeteoAuth.dto.StationDtoRequest;
 import com.meteoauth.MeteoAuth.dto.StationsDtoResponse;
 import com.meteoauth.MeteoAuth.entities.Station;
 import com.meteoauth.MeteoAuth.repository.StationsRepository;
+import com.meteoauth.MeteoAuth.repository.UserRepository;
 import com.meteoauth.MeteoAuth.services.JwtUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,11 +18,13 @@ import java.util.List;
 @RequestMapping("/api/stations")
 public class StationsController {
     private final StationsRepository stationsRepository;
+    private final UserRepository userRepository;
     private final StationsAssembler stationsAssembler;
     private final JwtUtil jwtUtil;
 
-    public StationsController(StationsRepository stationsRepository, StationsAssembler stationsAssembler, JwtUtil jwtUtil) {
+    public StationsController(StationsRepository stationsRepository, UserRepository userRepository, StationsAssembler stationsAssembler, JwtUtil jwtUtil) {
         this.stationsRepository = stationsRepository;
+        this.userRepository = userRepository;
         this.stationsAssembler = stationsAssembler;
         this.jwtUtil = jwtUtil;
     }
@@ -34,9 +37,16 @@ public class StationsController {
         return stationsAssembler.getStationDtoResponse(station);
     }
 
-    @GetMapping("")
+    @GetMapping("/getAll")
     public ResponseEntity<List<StationsDtoResponse>> getStations() {
         Iterable<Station> stationsList = stationsRepository.findAll();
+        return ResponseEntity.ok().body(stationsAssembler.getStationDtoRequestList(stationsList));
+    }
+
+    @GetMapping("/byUser")
+    public ResponseEntity<List<StationsDtoResponse>> getUserStations(@RequestHeader(name = "Authorization") String token) {
+        String email = jwtUtil.extractEmail(token);
+        Iterable<Station> stationsList = stationsRepository.findByUser(userRepository.findByEmail(email));
         return ResponseEntity.ok().body(stationsAssembler.getStationDtoRequestList(stationsList));
     }
 

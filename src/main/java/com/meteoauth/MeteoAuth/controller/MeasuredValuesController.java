@@ -26,7 +26,10 @@ public class MeasuredValuesController {
     }
 
     @PostMapping("/create/{stationTitle}")
-    public MeasuredValuesDtoResponse createMeasuredValues(@RequestBody @Valid MeasuredValuesDtoRequest measuredValuesDtoRequest, @PathVariable("stationTitle") String stationTitle) {
+    public MeasuredValuesDtoResponse createMeasuredValues(@RequestBody @Valid MeasuredValuesDtoRequest measuredValuesDtoRequest,
+                                                          @PathVariable("stationTitle") String stationTitle,
+                                                          @RequestHeader(name = "Authorization") String token) {
+
         MeasuredValue measuredValue = measuredValuesAssembler.createMeasuredValues(measuredValuesDtoRequest, stationTitle);
         measuredValue = measuredValuesRepository.save(measuredValue);
         return measuredValuesAssembler.getMeasuredValuesDtoResponse(measuredValue);

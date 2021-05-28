@@ -6,7 +6,6 @@ import java.sql.Timestamp;
 
 @Data
 public class MeasuredValuesDtoRequest {
-    private Timestamp measurement_time;
     private int humidity;
     private int temperature;
     private int air_quality;

@@ -10,5 +10,5 @@ import java.util.List;
 @Repository
 public interface StationsRepository extends JpaRepository<Station, Long> {
     Station findByTitle(String title);
-    List<Station> findByUser(User user);
+    Iterable<Station> findByUser(User user);
 }
