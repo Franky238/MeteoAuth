@@ -43,11 +43,29 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.csrf().disable()
-                .authorizeRequests().antMatchers("/api/authenticate", "/api/register").permitAll().
-                anyRequest().authenticated().and().
+        httpSecurity.csrf().disable().authorizeRequests().antMatchers("/api/authentication/**").permitAll()
+             //  .antMatchers("/api/users/**").hasAnyAuthority("ROLE_USER")
+              //  .antMatchers("/api/users").hasAnyAuthority("ROLE_ADMIN")
+             //   .antMatchers("/api/users","/api/users/**", "/api/stations/**", "/api/measured_values/**").hasRole("USER")
+         //       .antMatchers("/api/admin/**").hasRole("ADMIN")   .hasAnyAuthority("READ_PRIVILEGE")
+                .antMatchers("/api/users","/api/users/**", "/api/stations/**", "/api/measured_values/**").hasAnyAuthority("WRITE_PRIVILEGE", "READ_PRIVILEGE")
+
+                .anyRequest().authenticated().and().
                 exceptionHandling().and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+
         httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+
+
+//        httpSecurity.authorizeRequests()
+//                .antMatchers("/api/users").hasAnyAuthority("ROLE_USER")
+//                .anyRequest().authenticated()
+//                .and()
+//                .formLogin().permitAll()
+//                .and()
+//                .logout().permitAll()
+//                .and()
+//                .exceptionHandling().accessDeniedPage("/403");
     }
 }

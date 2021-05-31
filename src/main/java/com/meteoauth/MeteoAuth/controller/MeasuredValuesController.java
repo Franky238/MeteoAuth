@@ -25,12 +25,11 @@ public class MeasuredValuesController {
         this.jwtUtil = jwtUtil;
     }
 
-    @PostMapping("/create/{stationTitle}")
+    @PostMapping("/create/{id}")
     public MeasuredValuesDtoResponse createMeasuredValues(@RequestBody @Valid MeasuredValuesDtoRequest measuredValuesDtoRequest,
-                                                          @PathVariable("stationTitle") String stationTitle,
-                                                          @RequestHeader(name = "Authorization") String token) {
+                                                          @PathVariable("stationTitle") Long id) {
 
-        MeasuredValue measuredValue = measuredValuesAssembler.createMeasuredValues(measuredValuesDtoRequest, stationTitle);
+        MeasuredValue measuredValue = measuredValuesAssembler.createMeasuredValues(measuredValuesDtoRequest, id);
         measuredValue = measuredValuesRepository.save(measuredValue);
         return measuredValuesAssembler.getMeasuredValuesDtoResponse(measuredValue);
     }

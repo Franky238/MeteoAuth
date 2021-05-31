@@ -3,11 +3,13 @@ package com.meteoauth.MeteoAuth.assembler;
 import com.meteoauth.MeteoAuth.dto.MeasuredValuesDtoRequest;
 import com.meteoauth.MeteoAuth.dto.MeasuredValuesDtoResponse;
 import com.meteoauth.MeteoAuth.entities.MeasuredValue;
+import com.meteoauth.MeteoAuth.entities.Station;
 import com.meteoauth.MeteoAuth.repository.StationsRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class MeasuredValuesAssembler {
@@ -33,7 +35,7 @@ public class MeasuredValuesAssembler {
         return measuredValuesDtoResponse;
     }
 
-    public MeasuredValue createMeasuredValues(MeasuredValuesDtoRequest measuredValuesDtoRequest, String stationTitle) {
+    public MeasuredValue createMeasuredValues(MeasuredValuesDtoRequest measuredValuesDtoRequest, Long id) {
         MeasuredValue measuredValue = new MeasuredValue();
         measuredValue.setHumidity(measuredValuesDtoRequest.getHumidity());
         measuredValue.setTemperature(measuredValuesDtoRequest.getTemperature());
@@ -42,7 +44,8 @@ public class MeasuredValuesAssembler {
         measuredValue.setWind_gusts(measuredValuesDtoRequest.getWind_gusts());
         measuredValue.setWind_direction(measuredValuesDtoRequest.getWind_direction());
         measuredValue.setRainfall(measuredValuesDtoRequest.getRainfall());
-        measuredValue.setStation(stationsRepository.findByTitle(stationTitle));
+        Optional<Station> station = stationsRepository.findById(id);
+        station.ifPresent(measuredValue::setStation);
 
         return measuredValue;
     }

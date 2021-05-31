@@ -13,6 +13,7 @@ import java.util.List;
 @Component
 public class UserAssembler {
     private final PasswordEncoder passwordEncoder;
+    //private final PasswordEncoder passwordEncoder;
 
     public UserAssembler() {
         this.passwordEncoder = new BCryptPasswordEncoder();
@@ -33,6 +34,7 @@ public class UserAssembler {
         user.setPassword(passwordEncoder.encode(userDtoRequest.getPassword()));
         user.setEmail(userDtoRequest.getEmail());
         user.setCity(userDtoRequest.getCity());
+       // user.setRoles();
         return user;
     }
 

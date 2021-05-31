@@ -9,6 +9,7 @@ import com.meteoauth.MeteoAuth.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -38,6 +39,7 @@ public class UsersController {
 //                () -> new ResouceNotFoundException("User not found" + userId));
 //        return ResponseEntity.ok().body(userAssembler.getUserDtoResponse(user));
 //    }
+
 
     @GetMapping("")
     public ResponseEntity<List<UserDtoResponse>> getUsers() {

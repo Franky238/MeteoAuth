@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/stations")
@@ -50,13 +51,10 @@ public class StationsController {
         return ResponseEntity.ok().body(stationsAssembler.getStationDtoRequestList(stationsList));
     }
 
-    @DeleteMapping("{title}")
-    public ResponseEntity<Void> deleteStation(@PathVariable("title") String title) {
-        Station station = stationsRepository.findByTitle(title);
-        if (station == null) {
-            throw new ResouceNotFoundException("Station not found for this title :: " + title);
-        }
-        stationsRepository.delete(station);
+    @DeleteMapping("{id}")
+    public ResponseEntity<Void> deleteStation(@PathVariable("id") Long id) {
+        Optional<Station> station = stationsRepository.findById(id);
+        station.ifPresent(stationsRepository::delete);
         return ResponseEntity.ok().build();
     }
 }
