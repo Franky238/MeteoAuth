@@ -34,7 +34,7 @@ public class UserAssembler {
         user.setPassword(passwordEncoder.encode(userDtoRequest.getPassword()));
         user.setEmail(userDtoRequest.getEmail());
         user.setCity(userDtoRequest.getCity());
-       // user.setRoles();
+
         return user;
     }
 

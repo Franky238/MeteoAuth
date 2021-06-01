@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+@Transactional //todo
 @Service
 public class JwtUtil {
     private final String SECRET_KEY = "amFub3NlYw==";
