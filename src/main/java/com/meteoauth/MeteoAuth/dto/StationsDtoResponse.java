@@ -6,6 +6,7 @@ import java.sql.Timestamp;
 
 @Data
 public class StationsDtoResponse {
+    private Long id;
     private String title;
     private String destination;
     private String model_description;

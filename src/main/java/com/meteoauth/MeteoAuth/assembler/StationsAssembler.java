@@ -21,6 +21,7 @@ public class StationsAssembler {
 
     public StationsDtoResponse getStationDtoResponse(Station station) {
         StationsDtoResponse stationsDtoResponse = new StationsDtoResponse();
+        stationsDtoResponse.setId(station.getId());
         stationsDtoResponse.setDestination(station.getDestination());
         stationsDtoResponse.setModel_description(station.getModel_description());
         stationsDtoResponse.setPhone(station.getPhone());
@@ -44,12 +45,13 @@ public class StationsAssembler {
         List<StationsDtoResponse> stationsDtoResponses = new ArrayList<>();
         for (Station station : stationList) {
             StationsDtoResponse temp = new StationsDtoResponse();
+            temp.setId(station.getId());
             temp.setDestination(station.getDestination());
             temp.setModel_description(station.getModel_description());
             temp.setPhone(station.getPhone());
             temp.setRegistration_time(station.getRegistration_time());
             temp.setTitle(station.getTitle());
-            //todo userDtoResponse
+            temp.setUserDtoResponse(userAssembler.getUserDtoResponse(station.getUser()));//todo userDtoResponse
             stationsDtoResponses.add(temp);
         }
         return stationsDtoResponses;

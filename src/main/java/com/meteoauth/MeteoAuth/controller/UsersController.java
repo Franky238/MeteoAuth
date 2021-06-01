@@ -6,10 +6,10 @@ import com.meteoauth.MeteoAuth.dto.UserDtoRequest;
 import com.meteoauth.MeteoAuth.dto.UserDtoResponse;
 import com.meteoauth.MeteoAuth.entities.User;
 import com.meteoauth.MeteoAuth.repository.UserRepository;
+import com.meteoauth.MeteoAuth.services.JwtUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -18,10 +18,12 @@ import java.util.List;
 public class UsersController {
     private final UserRepository userRepository;
     private final UserAssembler userAssembler;
+    private final JwtUtil jwtUtil;
 
-    public UsersController(UserRepository userRepository, UserAssembler userAssembler) {
+    public UsersController(UserRepository userRepository, UserAssembler userAssembler, JwtUtil jwtUtil) {
         this.userRepository = userRepository;
         this.userAssembler = userAssembler;
+        this.jwtUtil = jwtUtil;
     }
 
     @GetMapping("/{email}")
@@ -81,8 +83,9 @@ public class UsersController {
 //        return ResponseEntity.ok(userAssembler.getUserDtoResponse(user));
 //    }
 
-    @DeleteMapping("{email}")
-    public ResponseEntity<Void> deleteUser(@PathVariable("email") String email) {
+    @DeleteMapping("/delete")
+    public ResponseEntity<Void> deleteThisUser( @RequestHeader(name = "Authorization") String token) {
+        String email = jwtUtil.extractEmail(token);
         User user = userRepository.findByEmail(email);
         if (user == null) {
             throw new ResouceNotFoundException("User not found for this email :: " + email);

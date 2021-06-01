@@ -59,7 +59,7 @@ public class MyUserDetailsService implements UserDetailsService {
     }
 
 
-  //todo new ArrayList<>()Arrays.asList(roleRepository.findByName("ROLE_USER")
+
 
 //    private Collection<? extends GrantedAuthority> getAuthorities(
 //            Collection<Role> roles) {

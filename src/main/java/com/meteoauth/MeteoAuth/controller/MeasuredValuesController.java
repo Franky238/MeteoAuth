@@ -1,16 +1,21 @@
 package com.meteoauth.MeteoAuth.controller;
 
+import com.meteoauth.MeteoAuth.ResouceNotFoundException;
 import com.meteoauth.MeteoAuth.assembler.MeasuredValuesAssembler;
 import com.meteoauth.MeteoAuth.dto.MeasuredValuesDtoRequest;
 import com.meteoauth.MeteoAuth.dto.MeasuredValuesDtoResponse;
 import com.meteoauth.MeteoAuth.entities.MeasuredValue;
+import com.meteoauth.MeteoAuth.entities.Station;
 import com.meteoauth.MeteoAuth.repository.MeasuredValuesRepository;
+import com.meteoauth.MeteoAuth.repository.StationsRepository;
+import com.meteoauth.MeteoAuth.repository.UserRepository;
 import com.meteoauth.MeteoAuth.services.JwtUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/measured_values")
@@ -18,21 +23,35 @@ public class MeasuredValuesController {
     private final MeasuredValuesRepository measuredValuesRepository;
     private final MeasuredValuesAssembler measuredValuesAssembler;
     private final JwtUtil jwtUtil;
+    private final StationsRepository stationsRepository;
+    private final UserRepository userRepository;
 
-    public MeasuredValuesController(MeasuredValuesRepository measuredValuesRepository, MeasuredValuesAssembler measuredValuesAssembler, JwtUtil jwtUtil) {
+    public MeasuredValuesController(MeasuredValuesRepository measuredValuesRepository, MeasuredValuesAssembler measuredValuesAssembler, JwtUtil jwtUtil, StationsRepository stationsRepository, UserRepository userRepository) {
         this.measuredValuesRepository = measuredValuesRepository;
         this.measuredValuesAssembler = measuredValuesAssembler;
         this.jwtUtil = jwtUtil;
+        this.stationsRepository = stationsRepository;
+        this.userRepository = userRepository;
     }
 
-    @PostMapping("/create/{id}")
-    public MeasuredValuesDtoResponse createMeasuredValues(@RequestBody @Valid MeasuredValuesDtoRequest measuredValuesDtoRequest,
-                                                          @PathVariable("stationTitle") Long id) {
-
-        MeasuredValue measuredValue = measuredValuesAssembler.createMeasuredValues(measuredValuesDtoRequest, id);
-        measuredValue = measuredValuesRepository.save(measuredValue);
-        return measuredValuesAssembler.getMeasuredValuesDtoResponse(measuredValue);
-    }
+//    @PostMapping("/create/{id}")
+//    public ResponseEntity<MeasuredValuesDtoResponse> createMeasuredValues(@RequestBody @Valid MeasuredValuesDtoRequest measuredValuesDtoRequest,
+//                                                     @PathVariable("id") Long id,
+//                                                     @RequestHeader(name = "Authorization") String token) {
+//
+//        String email = jwtUtil.extractEmail(token);
+//        Iterable<Station> stationsList = stationsRepository.findByUser(userRepository.findByEmail(email));
+//        Optional<Station> optionalStation = stationsRepository.findById(id);
+//        optionalStation.ifPresent();
+//        for (Station station : stationsList) {
+//            if (station==optionalStation.isPresent(optionalStation::get)) {
+//                MeasuredValue measuredValue = measuredValuesAssembler.createMeasuredValues(measuredValuesDtoRequest, id);
+//                measuredValue = measuredValuesRepository.save(measuredValue);
+//                return ResponseEntity.ok().body(measuredValuesAssembler.getMeasuredValuesDtoResponse(measuredValue));
+//            }
+//        }
+//        return ResponseEntity.notFound().build();
+//    }
 
     @GetMapping("")
     public ResponseEntity<List<MeasuredValuesDtoResponse>> getMeasuredValues() {
@@ -40,13 +59,10 @@ public class MeasuredValuesController {
         return ResponseEntity.ok().body(measuredValuesAssembler.getMeasuredValuesDtoRequestList(measuredValuesList));
     }
 
-//    @DeleteMapping("{time}")
-//    public ResponseEntity<Void> deleteMeasuredValues(@PathVariable("measuredValueID") Long measuredValueID) {
-//        MeasuredValue measuredValue = measuredValuesRepository.findById(measuredValueID);
-//        if (measuredValue == null) {
-//            throw new ResouceNotFoundException("MeasuredValue not found for this station :: " + measuredValueID);
-//        }
-//        measuredValuesRepository.delete(measuredValue);
-//        return ResponseEntity.ok().build();
-//    }
+    @DeleteMapping("{id}")
+    public ResponseEntity<Void> deleteMeasuredValues(@PathVariable("id") Long measuredValueID) {
+        Optional<MeasuredValue> measuredValue = measuredValuesRepository.findById(measuredValueID);
+        measuredValue.ifPresent(measuredValuesRepository::delete);
+        return ResponseEntity.ok().build();
+    }
 }

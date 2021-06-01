@@ -5,6 +5,7 @@ import com.meteoauth.MeteoAuth.assembler.StationsAssembler;
 import com.meteoauth.MeteoAuth.dto.StationDtoRequest;
 import com.meteoauth.MeteoAuth.dto.StationsDtoResponse;
 import com.meteoauth.MeteoAuth.entities.Station;
+import com.meteoauth.MeteoAuth.entities.User;
 import com.meteoauth.MeteoAuth.repository.StationsRepository;
 import com.meteoauth.MeteoAuth.repository.UserRepository;
 import com.meteoauth.MeteoAuth.services.JwtUtil;
@@ -52,9 +53,19 @@ public class StationsController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Void> deleteStation(@PathVariable("id") Long id) {
-        Optional<Station> station = stationsRepository.findById(id);
-        station.ifPresent(stationsRepository::delete);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<Void> deleteUserStation(@PathVariable("id") Long id, @RequestHeader(name = "Authorization") String token) {
+
+        String email = jwtUtil.extractEmail(token);
+        Iterable<Station> stationsList = stationsRepository.findByUser(userRepository.findByEmail(email));
+
+        Optional<Station> stationToDelete = stationsRepository.findById(id);
+        for (Station station:stationsList){
+            if (station.equals(stationToDelete)){
+                stationToDelete.ifPresent(stationsRepository::delete);
+                return ResponseEntity.ok().build();
+            }
+        }
+        return ResponseEntity.notFound().build();
+
     }
 }
