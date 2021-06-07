@@ -34,24 +34,24 @@ public class MeasuredValuesController {
         this.userRepository = userRepository;
     }
 
-//    @PostMapping("/create/{id}")
-//    public ResponseEntity<MeasuredValuesDtoResponse> createMeasuredValues(@RequestBody @Valid MeasuredValuesDtoRequest measuredValuesDtoRequest,
-//                                                     @PathVariable("id") Long id,
-//                                                     @RequestHeader(name = "Authorization") String token) {
-//
+    @PostMapping("/create/{id}")
+    public ResponseEntity<MeasuredValuesDtoResponse> createMeasuredValues(@RequestBody @Valid MeasuredValuesDtoRequest measuredValuesDtoRequest,
+                                                     @PathVariable("id") Long id,
+                                                     @RequestHeader(name = "Authorization") String token) {
+//todo
 //        String email = jwtUtil.extractEmail(token);
 //        Iterable<Station> stationsList = stationsRepository.findByUser(userRepository.findByEmail(email));
 //        Optional<Station> optionalStation = stationsRepository.findById(id);
 //        optionalStation.ifPresent();
 //        for (Station station : stationsList) {
-//            if (station==optionalStation.isPresent(optionalStation::get)) {
+//            if (station==optionalStation.isPresent()) {
 //                MeasuredValue measuredValue = measuredValuesAssembler.createMeasuredValues(measuredValuesDtoRequest, id);
 //                measuredValue = measuredValuesRepository.save(measuredValue);
 //                return ResponseEntity.ok().body(measuredValuesAssembler.getMeasuredValuesDtoResponse(measuredValue));
 //            }
 //        }
-//        return ResponseEntity.notFound().build();
-//    }
+        return ResponseEntity.notFound().build();
+    }
 
     @GetMapping("")
     public ResponseEntity<List<MeasuredValuesDtoResponse>> getMeasuredValues() {

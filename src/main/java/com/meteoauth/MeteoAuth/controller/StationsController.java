@@ -45,7 +45,7 @@ public class StationsController {
         return ResponseEntity.ok().body(stationsAssembler.getStationDtoRequestList(stationsList));
     }
 
-    @GetMapping("/byUser")
+    @GetMapping("/byUser") //todo ---------------------------------------------------------------------
     public ResponseEntity<List<StationsDtoResponse>> getUserStations(@RequestHeader(name = "Authorization") String token) {
         String email = jwtUtil.extractEmail(token);
         Iterable<Station> stationsList = stationsRepository.findByUser(userRepository.findByEmail(email));

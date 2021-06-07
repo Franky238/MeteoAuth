@@ -8,6 +8,7 @@ import com.meteoauth.MeteoAuth.entities.User;
 import com.meteoauth.MeteoAuth.repository.UserRepository;
 import com.meteoauth.MeteoAuth.services.JwtUtil;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -26,6 +27,7 @@ public class UsersController {
         this.jwtUtil = jwtUtil;
     }
 
+
     @GetMapping("/{email}")
     public ResponseEntity<UserDtoResponse> findByEmail(@PathVariable("email") String email) {
         User user = userRepository.findByEmail(email);
@@ -42,7 +44,7 @@ public class UsersController {
 //        return ResponseEntity.ok().body(userAssembler.getUserDtoResponse(user));
 //    }
 
-
+  //  @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("")
     public ResponseEntity<List<UserDtoResponse>> getUsers() {
         Iterable<User> userList = userRepository.findAll();

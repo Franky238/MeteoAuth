@@ -5,11 +5,15 @@ import com.meteoauth.MeteoAuth.dto.AuthenticationRequest;
 import com.meteoauth.MeteoAuth.dto.AuthenticationResponse;
 import com.meteoauth.MeteoAuth.dto.UserDtoRequest;
 import com.meteoauth.MeteoAuth.dto.UserDtoResponse;
+import com.meteoauth.MeteoAuth.entities.Station;
 import com.meteoauth.MeteoAuth.entities.User;
 import com.meteoauth.MeteoAuth.repository.RoleRepository;
+import com.meteoauth.MeteoAuth.repository.StationsRepository;
 import com.meteoauth.MeteoAuth.repository.UserRepository;
 import com.meteoauth.MeteoAuth.services.JwtUtil;
 import com.meteoauth.MeteoAuth.services.MyUserDetailsService;
+import javassist.NotFoundException;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -19,6 +23,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.Optional;
 
 @RestController
 @RequestMapping({"/api/authentication"})
@@ -30,14 +36,16 @@ public class AuthenticationController {
     private final UserAssembler userAssembler;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final StationsRepository stationsRepository;
 
-    public AuthenticationController(AuthenticationManager authenticationManager, JwtUtil jwtTokenUtil, MyUserDetailsService userDetailsService, UserAssembler userAssembler, UserRepository userRepository, RoleRepository roleRepository) {
+    public AuthenticationController(AuthenticationManager authenticationManager, JwtUtil jwtTokenUtil, MyUserDetailsService userDetailsService, UserAssembler userAssembler, UserRepository userRepository, RoleRepository roleRepository, StationsRepository stationsRepository) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenUtil = jwtTokenUtil;
         this.userDetailsService = userDetailsService;
         this.userAssembler = userAssembler;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.stationsRepository = stationsRepository;
     }
 
     @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
@@ -48,8 +56,7 @@ public class AuthenticationController {
                     new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword())
             );
 
-        }
-        catch (BadCredentialsException e) {
+        } catch (BadCredentialsException e) {
             throw new Exception("Incorrect username or password", e);
         }
 
@@ -57,6 +64,24 @@ public class AuthenticationController {
 
         final String jwt = jwtTokenUtil.generateToken(userDetails);
 
+        return ResponseEntity.ok(new AuthenticationResponse(jwt));
+    }
+
+    @RequestMapping(value = "/authenticate-station/{id}", method = RequestMethod.GET)
+    public ResponseEntity<?> createAuthenticationTokenForStation(@PathVariable Long id, @RequestParam(required = false)
+                    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date expiration) throws Exception {
+        Optional<Station> station = stationsRepository.findById(id);
+
+        if (station.isEmpty()) {
+            throw new Exception("Station not found");
+        }
+
+        final String jwt;
+        if (expiration == null) {
+            jwt = jwtTokenUtil.generateTokenForStation(station.get());
+        } else {
+            jwt = jwtTokenUtil.generateTokenForStation(station.get(), expiration);
+        }
         return ResponseEntity.ok(new AuthenticationResponse(jwt));
     }
 

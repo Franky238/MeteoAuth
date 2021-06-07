@@ -1,5 +1,6 @@
 package com.meteoauth.MeteoAuth.services;
 
+import com.meteoauth.MeteoAuth.entities.Station;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -50,23 +51,43 @@ public class JwtUtil {
 
     public String generateToken(UserDetails userDetails) {// todo roles
         Map<String, Object> claims = new HashMap<>();
-    //    for(userDetails.getAuthorities()){
-  //         claims.put("authorities",userDetails.getAuthorities());
+        //    for(userDetails.getAuthorities()){
+        //         claims.put("authorities",userDetails.getAuthorities());
 //            claims.put("READ_PRIVILEGE",true);
-       // }
-     //   claims.put("role",true);
+        // }
+        //   claims.put("role",true);
         return createToken(claims, userDetails.getUsername());
     }
 
-//    public String generateToken(UserDetails userDetails, String stationID) {// todo roles
-//        Map<String, Object> claims = new HashMap<>();
-//        claims.put("stationID", stationID);
-//        return createToken(claims, userDetails.getUsername());
-//    }
+    public String generateTokenForStation(Station station) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("authorities", "ROLE_STATION");
+        return createStationToken(claims, station.getId().toString());
+    }
+    public String generateTokenForStation(Station station, Date expiration) throws Exception {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("authorities", "ROLE_STATION");
+        return createStationToken(claims, station.getId().toString(), expiration);
+    }
+
 
     private String createToken(Map<String, Object> claims, String subject) {
-        return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
+        return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
+                .signWith(SignatureAlgorithm.HS256, SECRET_KEY).compact();
+    }
+
+    private String createStationToken(Map<String, Object> claims, String subject, Date expiration) throws Exception {
+        if (expiration.before(new Date())) {
+            throw new Exception("Expiration cannot be before now");
+        }
+        return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date())
+                .setExpiration(expiration)
+                .signWith(SignatureAlgorithm.HS256, SECRET_KEY).compact();
+    }
+
+    private String createStationToken(Map<String, Object> claims, String subject) {
+        return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date())
                 .signWith(SignatureAlgorithm.HS256, SECRET_KEY).compact();
     }
 

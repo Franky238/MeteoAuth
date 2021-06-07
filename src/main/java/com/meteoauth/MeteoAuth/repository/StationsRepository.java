@@ -11,6 +11,5 @@ import java.util.Optional;
 @Repository
 public interface StationsRepository extends JpaRepository<Station, Long> {
     Optional<Station> findById(Long id);
- //   Optional<Station> findByUser(User user);
     Iterable<Station> findByUser(User user);
 }
