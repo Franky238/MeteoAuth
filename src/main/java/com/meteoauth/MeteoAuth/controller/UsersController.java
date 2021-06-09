@@ -8,7 +8,6 @@ import com.meteoauth.MeteoAuth.entities.User;
 import com.meteoauth.MeteoAuth.repository.UserRepository;
 import com.meteoauth.MeteoAuth.services.JwtUtil;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -87,7 +86,7 @@ public class UsersController {
 
     @DeleteMapping("/delete")
     public ResponseEntity<Void> deleteThisUser( @RequestHeader(name = "Authorization") String token) {
-        String email = jwtUtil.extractEmail(token);
+        String email = jwtUtil.extractSubject(token);
         User user = userRepository.findByEmail(email);
         if (user == null) {
             throw new ResouceNotFoundException("User not found for this email :: " + email);

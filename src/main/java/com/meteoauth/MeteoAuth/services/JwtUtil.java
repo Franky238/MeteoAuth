@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +19,7 @@ import java.util.function.Function;
 public class JwtUtil {
     private final String SECRET_KEY = "amFub3NlYw==";
 
-    public String extractEmail(String token) {
+    public String extractSubject(String token) {
         if (token.startsWith("Bearer ")) {
             token = token.substring(7);
         }
@@ -45,6 +46,12 @@ public class JwtUtil {
         return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
     }
 
+    public boolean hasRole(String token, String role) {
+        final Claims claims = extractAllClaims(token);
+        Object authorities = claims.get("authorities");
+        return authorities.toString().contains(role);
+    }
+
     private Boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
@@ -64,6 +71,7 @@ public class JwtUtil {
         claims.put("authorities", "ROLE_STATION");
         return createStationToken(claims, station.getId().toString());
     }
+
     public String generateTokenForStation(Station station, Date expiration) throws Exception {
         Map<String, Object> claims = new HashMap<>();
         claims.put("authorities", "ROLE_STATION");
@@ -92,7 +100,12 @@ public class JwtUtil {
     }
 
     public Boolean validateToken(String token, UserDetails userDetails) {
-        final String username = extractEmail(token);
+        final String username = extractSubject(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    }
+
+    public Boolean validateTokenForStation(String token, Station station) {
+        final String id = extractSubject(token);
+        return (id.equals(station.getId())); //todo && !isTokenExpired(token)
     }
 }

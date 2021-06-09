@@ -1,11 +1,9 @@
 package com.meteoauth.MeteoAuth.controller;
 
-import com.meteoauth.MeteoAuth.ResouceNotFoundException;
 import com.meteoauth.MeteoAuth.assembler.StationsAssembler;
 import com.meteoauth.MeteoAuth.dto.StationDtoRequest;
 import com.meteoauth.MeteoAuth.dto.StationsDtoResponse;
 import com.meteoauth.MeteoAuth.entities.Station;
-import com.meteoauth.MeteoAuth.entities.User;
 import com.meteoauth.MeteoAuth.repository.StationsRepository;
 import com.meteoauth.MeteoAuth.repository.UserRepository;
 import com.meteoauth.MeteoAuth.services.JwtUtil;
@@ -33,7 +31,7 @@ public class StationsController {
 
     @PostMapping("/add")//todo add->create
     public StationsDtoResponse createStation(@RequestBody @Valid StationDtoRequest stationDtoRequest, @RequestHeader(name = "Authorization") String token) {
-        String email = jwtUtil.extractEmail(token);
+        String email = jwtUtil.extractSubject(token);
         Station station = stationsAssembler.createStation(stationDtoRequest, email);
         station = stationsRepository.save(station);
         return stationsAssembler.getStationDtoResponse(station);
@@ -47,7 +45,7 @@ public class StationsController {
 
     @GetMapping("/byUser") //todo ---------------------------------------------------------------------
     public ResponseEntity<List<StationsDtoResponse>> getUserStations(@RequestHeader(name = "Authorization") String token) {
-        String email = jwtUtil.extractEmail(token);
+        String email = jwtUtil.extractSubject(token);
         Iterable<Station> stationsList = stationsRepository.findByUser(userRepository.findByEmail(email));
         return ResponseEntity.ok().body(stationsAssembler.getStationDtoRequestList(stationsList));
     }
@@ -55,7 +53,7 @@ public class StationsController {
     @DeleteMapping("{id}")
     public ResponseEntity<Void> deleteUserStation(@PathVariable("id") Long id, @RequestHeader(name = "Authorization") String token) {
 
-        String email = jwtUtil.extractEmail(token);
+        String email = jwtUtil.extractSubject(token);
         Iterable<Station> stationsList = stationsRepository.findByUser(userRepository.findByEmail(email));
 
         Optional<Station> stationToDelete = stationsRepository.findById(id);
