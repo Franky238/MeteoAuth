@@ -105,7 +105,7 @@ public class JwtUtil {
     }
 
     public Boolean validateTokenForStation(String token, Station station) {
-        final String id = extractSubject(token);
+        final Long id = Long.parseLong(extractSubject(token));
         return (id.equals(station.getId())); //todo && !isTokenExpired(token)
     }
 }

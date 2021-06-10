@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Collections;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
@@ -50,13 +51,14 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
 
             if (jwtUtil.hasRole(jwt, "ROLE_STATION")) {
-                Station station = stationsRepository.findById(Long.getLong(subject)).get();
+
+                Station station = stationsRepository.getOne(Long.parseLong(subject));
 
                 if (jwtUtil.validateTokenForStation(jwt, station)){
                     SecurityContextHolder.getContext().setAuthentication(new Authentication() {
                         @Override
                         public Collection<? extends GrantedAuthority> getAuthorities() {
-                            return null;
+                            return Collections.singletonList((GrantedAuthority) () -> "ROLE_USER");
                         }
 
                         @Override
@@ -89,6 +91,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                             return null;
                         }
                     });
+                    chain.doFilter(request, response);
+                    return;
                 }
             }
 
