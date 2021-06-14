@@ -1,16 +1,20 @@
 package com.meteoauth.MeteoAuth.services;
 
+import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
+import java.beans.ConstructorProperties;
 import java.util.Collection;
+import java.util.Collections;
 
+@AllArgsConstructor
 public class StationAuthentication implements Authentication {
 
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return Collections.singletonList((GrantedAuthority) () -> "ROLE_STATION");
     }
 
     @Override
@@ -30,7 +34,7 @@ public class StationAuthentication implements Authentication {
 
     @Override
     public boolean isAuthenticated() {
-        return false;
+        return true;
     }
 
     @Override

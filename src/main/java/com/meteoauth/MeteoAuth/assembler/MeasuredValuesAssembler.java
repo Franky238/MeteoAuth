@@ -21,9 +21,9 @@ public class MeasuredValuesAssembler {
         this.stationsRepository = stationsRepository;
     }
 
-
     public MeasuredValuesDtoResponse getMeasuredValuesDtoResponse(MeasuredValue measuredValue) {
         MeasuredValuesDtoResponse measuredValuesDtoResponse = new MeasuredValuesDtoResponse();
+        measuredValuesDtoResponse.setId(measuredValue.getId());
         measuredValuesDtoResponse.setMeasurement_time(measuredValue.getMeasurementTime());
         measuredValuesDtoResponse.setHumidity(measuredValue.getHumidity());
         measuredValuesDtoResponse.setTemperature(measuredValue.getTemperature());
@@ -32,6 +32,7 @@ public class MeasuredValuesAssembler {
         measuredValuesDtoResponse.setWind_gusts(measuredValue.getWind_gusts());
         measuredValuesDtoResponse.setWind_direction(measuredValue.getWind_direction());
         measuredValuesDtoResponse.setRainfall(measuredValue.getRainfall());
+        measuredValuesDtoResponse.setStation(stationsAssembler.getStationDtoResponse(measuredValue.getStation()));
         return measuredValuesDtoResponse;
     }
 
@@ -46,7 +47,6 @@ public class MeasuredValuesAssembler {
         measuredValue.setRainfall(measuredValuesDtoRequest.getRainfall());
         Optional<Station> station = stationsRepository.findById(id);
         station.ifPresent(measuredValue::setStation);
-
         return measuredValue;
     }
 

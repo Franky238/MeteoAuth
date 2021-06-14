@@ -4,9 +4,8 @@ import com.meteoauth.MeteoAuth.entities.Station;
 import com.meteoauth.MeteoAuth.repository.StationsRepository;
 import com.meteoauth.MeteoAuth.services.JwtUtil;
 import com.meteoauth.MeteoAuth.services.MyUserDetailsService;
+import com.meteoauth.MeteoAuth.services.StationAuthentication;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -18,14 +17,13 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
     private final MyUserDetailsService userDetailsService;
     private final StationsRepository stationsRepository;
     private final JwtUtil jwtUtil;
+    private final StationAuthentication stationAuthentication = new StationAuthentication();
 
     public JwtRequestFilter(MyUserDetailsService userDetailsService, StationsRepository stationsRepository, JwtUtil jwtUtil) {
         this.userDetailsService = userDetailsService;
@@ -49,60 +47,22 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         if (subject != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-
             if (jwtUtil.hasRole(jwt, "ROLE_STATION")) {
 
                 Station station = stationsRepository.getOne(Long.parseLong(subject));
 
                 if (jwtUtil.validateTokenForStation(jwt, station)){
-                    SecurityContextHolder.getContext().setAuthentication(new Authentication() {
-                        @Override
-                        public Collection<? extends GrantedAuthority> getAuthorities() {
-                            return Collections.singletonList((GrantedAuthority) () -> "ROLE_USER");
-                        }
-
-                        @Override
-                        public Object getCredentials() {
-                            return null;
-                        }
-
-                        @Override
-                        public Object getDetails() {
-                            return null;
-                        }
-
-                        @Override
-                        public Object getPrincipal() {
-                            return null;
-                        }
-
-                        @Override
-                        public boolean isAuthenticated() {
-                            return true;
-                        }
-
-                        @Override
-                        public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
-
-                        }
-
-                        @Override
-                        public String getName() {
-                            return null;
-                        }
-                    });
+                    SecurityContextHolder.getContext().setAuthentication(stationAuthentication);
                     chain.doFilter(request, response);
                     return;
                 }
             }
 
-
-
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(subject);
 
             if (jwtUtil.validateToken(jwt, userDetails)) {
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities()); //todo
+                        userDetails, null, userDetails.getAuthorities());
                 usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
             }

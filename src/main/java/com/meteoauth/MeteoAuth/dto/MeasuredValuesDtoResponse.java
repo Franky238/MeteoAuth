@@ -1,5 +1,6 @@
 package com.meteoauth.MeteoAuth.dto;
 
+import com.meteoauth.MeteoAuth.entities.Station;
 import lombok.Data;
 
 import java.sql.Timestamp;
@@ -15,4 +16,5 @@ public class MeasuredValuesDtoResponse {
     private int wind_gusts;
     private int wind_direction;
     private int rainfall;
+    private StationsDtoResponse station;
 }
