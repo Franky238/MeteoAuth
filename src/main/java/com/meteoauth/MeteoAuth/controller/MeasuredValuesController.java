@@ -11,8 +11,11 @@ import com.meteoauth.MeteoAuth.repository.StationsRepository;
 import com.meteoauth.MeteoAuth.repository.UserRepository;
 import com.meteoauth.MeteoAuth.services.JwtUtil;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.security.PermitAll;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
@@ -45,16 +48,28 @@ public class MeasuredValuesController {
 
     }
 
-    @GetMapping("")
+    @GetMapping("/all")//permit all
     public ResponseEntity<List<MeasuredValuesDtoResponse>> getMeasuredValues() {
         Iterable<MeasuredValue> measuredValuesList = measuredValuesRepository.findAll();
         return ResponseEntity.ok().body(measuredValuesAssembler.getMeasuredValuesDtoRequestList(measuredValuesList));
     }
 
+    @GetMapping("/by-station")
+    public ResponseEntity<List<MeasuredValuesDtoResponse>> getMeasuredValuesByStation(@RequestHeader(name = "Authorization") String token) {
+        Long id =Long.parseLong(jwtUtil.extractSubject(token));
+        Iterable<MeasuredValue> measuredValuesList = measuredValuesRepository.findByStation(stationsRepository.findById(id).get());
+        return ResponseEntity.ok().body(measuredValuesAssembler.getMeasuredValuesDtoRequestList(measuredValuesList));
+    }
+
     @DeleteMapping("{id}")
-    public ResponseEntity<Void> deleteMeasuredValues(@PathVariable("id") Long measuredValueID) {
-        Optional<MeasuredValue> measuredValue = measuredValuesRepository.findById(measuredValueID);
-        measuredValue.ifPresent(measuredValuesRepository::delete);
+    public ResponseEntity<Void> deleteOwnerMeasuredValues(@PathVariable("id") Long measuredValueID, @RequestHeader(name = "Authorization") String token) {
+        Optional<MeasuredValue> optionalMeasuredValue = measuredValuesRepository.findById(measuredValueID);
+        Long id =Long.parseLong(jwtUtil.extractSubject(token));
+        MeasuredValue measuredValue = optionalMeasuredValue.get();
+        if (!measuredValue.getStation().getId().equals(stationsRepository.findById(id).get())){
+            return  ResponseEntity.notFound().build();
+        }
+        optionalMeasuredValue.ifPresent(measuredValuesRepository::delete);
         return ResponseEntity.ok().build();
     }
 }

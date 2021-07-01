@@ -12,7 +12,6 @@ import com.meteoauth.MeteoAuth.repository.StationsRepository;
 import com.meteoauth.MeteoAuth.repository.UserRepository;
 import com.meteoauth.MeteoAuth.services.JwtUtil;
 import com.meteoauth.MeteoAuth.services.MyUserDetailsService;
-import javassist.NotFoundException;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,11 +20,13 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.security.PermitAll;
 import javax.validation.Valid;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Optional;
 
+@PermitAll
 @RestController
 @RequestMapping({"/api/authentication"})
 public class AuthenticationController {
@@ -48,6 +49,7 @@ public class AuthenticationController {
         this.stationsRepository = stationsRepository;
     }
 
+
     @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
 
@@ -69,7 +71,7 @@ public class AuthenticationController {
 
     @RequestMapping(value = "/authenticate-station/{id}", method = RequestMethod.GET)
     public ResponseEntity<?> createAuthenticationTokenForStation(@PathVariable Long id, @RequestParam(required = false)
-                    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date expiration) throws Exception {
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date expiration) throws Exception {
         Optional<Station> station = stationsRepository.findById(id);
 
         if (station.isEmpty()) {

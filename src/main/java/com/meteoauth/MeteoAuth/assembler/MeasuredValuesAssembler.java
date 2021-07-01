@@ -55,6 +55,7 @@ public class MeasuredValuesAssembler {
         List<MeasuredValuesDtoResponse> measuredValuesDtoResponses = new ArrayList<>();
         for (MeasuredValue measuredValue : measuredValuesList) {
             MeasuredValuesDtoResponse temp = new MeasuredValuesDtoResponse();
+            temp.setId(measuredValue.getId());
             temp.setMeasurement_time(measuredValue.getMeasurementTime());
             temp.setHumidity(measuredValue.getHumidity());
             temp.setTemperature(measuredValue.getTemperature());
@@ -63,6 +64,7 @@ public class MeasuredValuesAssembler {
             temp.setWind_gusts(measuredValue.getWind_gusts());
             temp.setWind_direction(measuredValue.getWind_direction());
             temp.setRainfall(measuredValue.getRainfall());
+            temp.setStation(stationsAssembler.getStationDtoResponse(measuredValue.getStation()));
             measuredValuesDtoResponses.add(temp);
         }
         return measuredValuesDtoResponses;

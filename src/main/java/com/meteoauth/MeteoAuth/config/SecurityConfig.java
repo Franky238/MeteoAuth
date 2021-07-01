@@ -43,8 +43,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.csrf().disable().authorizeRequests().antMatchers("/api/authentication/**").permitAll()
-                .antMatchers("/api/users", "/api/users/**", "/api/stations/**").hasRole("USER")
+        httpSecurity.csrf().disable().authorizeRequests().antMatchers("/api/authentication/**", "/api/measured_values/all").permitAll()
+                .antMatchers("/api/users", "/api/users/**", "/api/stations/**", "/api/measured_values/by-station", "/api/measured_values/all").hasRole("USER")
                 .antMatchers("/api/measured_values/**").hasRole("STATION")
                 .antMatchers("/**").hasRole("ADMIN")
                 .anyRequest().authenticated().and().
@@ -52,5 +52,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+
     }
 }

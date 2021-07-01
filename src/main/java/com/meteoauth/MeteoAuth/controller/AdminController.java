@@ -4,6 +4,7 @@ import com.meteoauth.MeteoAuth.ResouceNotFoundException;
 import com.meteoauth.MeteoAuth.assembler.MeasuredValuesAssembler;
 import com.meteoauth.MeteoAuth.assembler.StationsAssembler;
 import com.meteoauth.MeteoAuth.assembler.UserAssembler;
+import com.meteoauth.MeteoAuth.entities.MeasuredValue;
 import com.meteoauth.MeteoAuth.entities.Station;
 import com.meteoauth.MeteoAuth.entities.User;
 import com.meteoauth.MeteoAuth.repository.MeasuredValuesRepository;
@@ -64,6 +65,13 @@ public class AdminController {
     public ResponseEntity<Void> deleteUserStation(@PathVariable("id") Long id) {
         Optional<Station> stationToDelete = stationsRepository.findById(id);
         stationToDelete.ifPresent(stationsRepository::delete);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("measured-value/{id}")
+    public ResponseEntity<Void> deleteMeasuredValues(@PathVariable("id") Long measuredValueID) {
+        Optional<MeasuredValue> measuredValue = measuredValuesRepository.findById(measuredValueID);
+        measuredValue.ifPresent(measuredValuesRepository::delete);
         return ResponseEntity.ok().build();
     }
 }

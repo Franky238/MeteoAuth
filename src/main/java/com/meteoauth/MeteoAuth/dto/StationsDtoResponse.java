@@ -12,5 +12,5 @@ public class StationsDtoResponse {
     private String model_description;
     private Timestamp registration_time;
     private String phone;
-    private UserDtoResponse userDtoResponse;
+    private UserDtoResponse user;
 }

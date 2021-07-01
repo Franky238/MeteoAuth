@@ -27,7 +27,7 @@ public class StationsAssembler {
         stationsDtoResponse.setPhone(station.getPhone());
         stationsDtoResponse.setRegistration_time(station.getRegistration_time());
         stationsDtoResponse.setTitle(station.getTitle());
-        stationsDtoResponse.setUserDtoResponse(userAssembler.getUserDtoResponse(station.getUser()));
+        stationsDtoResponse.setUser(userAssembler.getUserDtoResponse(station.getUser()));
         return stationsDtoResponse;
     }
 
@@ -51,7 +51,7 @@ public class StationsAssembler {
             temp.setPhone(station.getPhone());
             temp.setRegistration_time(station.getRegistration_time());
             temp.setTitle(station.getTitle());
-            temp.setUserDtoResponse(userAssembler.getUserDtoResponse(station.getUser()));//todo userDtoResponse
+            temp.setUser(userAssembler.getUserDtoResponse(station.getUser()));//todo userDtoResponse
             stationsDtoResponses.add(temp);
         }
         return stationsDtoResponses;
