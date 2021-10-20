@@ -1,0 +1,41 @@
+server:
+  port: '9090'
+spring:
+  jpa:
+    database: POSTGRESQL
+    show-sql: 'true'
+    generate-ddl: 'true'
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non_contextual_creation: 'true'
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  datasource:
+    platform: postgres
+    url: 'jdbc:postgresql://localhost:5432/db_meteoauth'
+    username: postgres
+    password: pass
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            clientId: 294783079570-2r2nvbf3efafklbsrhp5p47ukr2si94j.apps.googleusercontent.com
+            clientSecret: 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
+            redirectUri: "{baseUrl}/oauth2/callback/{registrationId}"
+            scope:
+              - email
+              - profile
+
+app:
+  oauth2:
+    # After successfully authenticating with the OAuth2 Provider,
+    # we'll be generating an auth token for the user and sending the token to the
+    # redirectUri mentioned by the frontend client in the /oauth2/authorize request.
+    # We're not using cookies because they won't work well in mobile clients.
+    authorizedRedirectUris:
+      - http://http://localhost:4200/

@@ -61,6 +61,13 @@ public class MeasuredValuesController {
         return ResponseEntity.ok().body(measuredValuesAssembler.getMeasuredValuesDtoRequestList(measuredValuesList));
     }
 
+    @GetMapping("/by-station/{id}")
+    public ResponseEntity<List<MeasuredValuesDtoResponse>> getMeasuredValuesByStation(@PathVariable("id") Long stationID) {
+
+        Iterable<MeasuredValue> measuredValuesList = measuredValuesRepository.findByStation(stationsRepository.findById(stationID).get());
+        return ResponseEntity.ok().body(measuredValuesAssembler.getMeasuredValuesDtoRequestList(measuredValuesList));
+    }
+
     @DeleteMapping("{id}")
     public ResponseEntity<Void> deleteOwnerMeasuredValues(@PathVariable("id") Long measuredValueID, @RequestHeader(name = "Authorization") String token) {
         Optional<MeasuredValue> optionalMeasuredValue = measuredValuesRepository.findById(measuredValueID);

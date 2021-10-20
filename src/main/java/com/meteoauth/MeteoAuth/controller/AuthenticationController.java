@@ -10,6 +10,8 @@ import com.meteoauth.MeteoAuth.entities.User;
 import com.meteoauth.MeteoAuth.repository.RoleRepository;
 import com.meteoauth.MeteoAuth.repository.StationsRepository;
 import com.meteoauth.MeteoAuth.repository.UserRepository;
+
+
 import com.meteoauth.MeteoAuth.services.JwtUtil;
 import com.meteoauth.MeteoAuth.services.MyUserDetailsService;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -22,6 +24,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.PermitAll;
 import javax.validation.Valid;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Optional;
@@ -39,6 +43,7 @@ public class AuthenticationController {
     private final RoleRepository roleRepository;
     private final StationsRepository stationsRepository;
 
+
     public AuthenticationController(AuthenticationManager authenticationManager, JwtUtil jwtTokenUtil, MyUserDetailsService userDetailsService, UserAssembler userAssembler, UserRepository userRepository, RoleRepository roleRepository, StationsRepository stationsRepository) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenUtil = jwtTokenUtil;
@@ -47,8 +52,8 @@ public class AuthenticationController {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.stationsRepository = stationsRepository;
-    }
 
+    }
 
     @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
@@ -96,6 +101,13 @@ public class AuthenticationController {
 
         user = userRepository.save(user);
         return userAssembler.getUserDtoResponse(user);
+    }
+
+    @PostMapping("/googleRegister")
+    public ResponseEntity<Object> addGoogleUser(@RequestBody @Valid String idTokenString) throws GeneralSecurityException, IOException {
+
+return null;
+
     }
 
 }

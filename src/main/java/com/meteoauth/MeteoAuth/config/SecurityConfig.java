@@ -1,12 +1,14 @@
 package com.meteoauth.MeteoAuth.config;
 
 import com.meteoauth.MeteoAuth.filtres.JwtRequestFilter;
+
 import com.meteoauth.MeteoAuth.services.MyUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -41,17 +43,34 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
+//    @Bean
+//    public HttpCookieOAuth2AuthorizationRequestRepository cookieAuthorizationRequestRepository() {
+//        return new HttpCookieOAuth2AuthorizationRequestRepository();
+//    }
+
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf().disable().authorizeRequests().antMatchers("/api/authentication/**", "/api/measured_values/all").permitAll()
-                .antMatchers("/api/users", "/api/users/**", "/api/stations/**", "/api/measured_values/by-station", "/api/measured_values/all").hasRole("USER")
+                .antMatchers("/api/users", "/api/users/**", "/api/stations/**", "/api/measured_values/by-station/**", "/api/measured_values/all").hasRole("USER")
                 .antMatchers("/api/measured_values/**").hasRole("STATION")
                 .antMatchers("/**").hasRole("ADMIN")
                 .anyRequest().authenticated().and().
                 exceptionHandling().and().sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
 
-        httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+                .oauth2Login()
+                .authorizationEndpoint()
+                .baseUri("/oauth2/authorize");
+               // .authorizationRequestRepository(cookieAuthorizationRequestRepository());
+
+                httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
     }
+
+//    @Override
+//    public void configure(WebSecurity webSecurity) throws Exception {
+//        WebSecurity.IgnoredRequestConfigurer unprotectedRoutes = webSecurity.ignoring();
+//        unprotectedRoutes.antMatchers("/api/authentication/**");
+//    }
+
 }
