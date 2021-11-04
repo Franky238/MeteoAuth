@@ -15,6 +15,7 @@ import javax.transaction.Transactional;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @Component
 public class SetupDataLoader implements ApplicationListener<ContextRefreshedEvent> {
@@ -50,8 +51,12 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         user.setUsername("admin");
         user.setPassword(passwordEncoder.encode("admin"));
         user.setEmail("admin@admin.com");
-        user.setRoles(Arrays.asList(adminRole));
+        //user.setRoles(Arrays.asList(adminRole));
+        user.setRoles(Set.of(adminRole));
         user.setEnabled(true);
+
+        user.setName("admin");
+        user.setEmailVerified(true);
         userRepository.save(user);
 
         alreadySetup = true;

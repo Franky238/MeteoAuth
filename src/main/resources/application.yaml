@@ -26,16 +26,42 @@ spring:
           google:
             clientId: 294783079570-2r2nvbf3efafklbsrhp5p47ukr2si94j.apps.googleusercontent.com
             clientSecret: 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
-            redirectUri: "{baseUrl}/oauth2/callback/{registrationId}"
-            scope:
-              - email
-              - profile
-
+          facebook:
+            clientId: 641104487053125
+            clientSecret: 0b24875f4981119fed371870d57563b2
+          github:
+            clientId: bd47c3f64bdfc0d4aeaa
+            clientSecret: 7e17df59b2c10ca8454c24804d96880d6a1cdde2
+          linkedin:
+            clientId: <your-client-id>
+            clientSecret: <your-client-secret>
+            client-authentication-method: post
+            authorization-grant-type: authorization_code
+            scope: 'r_liteprofile, r_emailaddress'
+            redirect-uri: '{baseUrl}/login/oauth2/code/{registrationId}'
+            client-name: Linkedin
+            provider: linkedin
+        provider:
+          facebook:
+            user-info-uri: 'https://graph.facebook.com/me?fields'
+          linkedin:
+            authorization-uri: 'https://www.linkedin.com/oauth/v2/authorization'
+            token-uri: 'https://www.linkedin.com/oauth/v2/accessToken'
+            user-info-uri: 'https://api.linkedin.com/v2/me'
+            user-name-attribute: id
+#linkedin:
+#  email-address-uri: 'https://api.linkedin.com/v2/emailAddress?q'
 app:
+  auth:
+    tokenSecret: amFub3NlYw==
+    tokenExpirationMsec: '864000000'
   oauth2:
-    # After successfully authenticating with the OAuth2 Provider,
-    # we'll be generating an auth token for the user and sending the token to the
-    # redirectUri mentioned by the frontend client in the /oauth2/authorize request.
-    # We're not using cookies because they won't work well in mobile clients.
     authorizedRedirectUris:
-      - http://http://localhost:4200/
+      - http://localhost:4200/oauth2/redirect
+      - http://localhost:4200/login
+      - http://localhost:8080/oauth2/authorization/google?redirect_uri=http://localhost:4200/login
+
+#logging:
+#  level:
+#    org:
+#      springframework: TRACE

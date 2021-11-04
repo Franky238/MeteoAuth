@@ -2,9 +2,9 @@ package com.meteoauth.MeteoAuth.filtres;
 
 import com.meteoauth.MeteoAuth.entities.Station;
 import com.meteoauth.MeteoAuth.repository.StationsRepository;
-import com.meteoauth.MeteoAuth.services.JwtUtil;
 import com.meteoauth.MeteoAuth.services.MyUserDetailsService;
 import com.meteoauth.MeteoAuth.services.StationAuthentication;
+import com.meteoauth.MeteoAuth.services.TokenProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,13 +22,13 @@ import java.io.IOException;
 public class JwtRequestFilter extends OncePerRequestFilter {
     private final MyUserDetailsService userDetailsService;
     private final StationsRepository stationsRepository;
-    private final JwtUtil jwtUtil;
+    private final TokenProvider tokenProvider;
     private final StationAuthentication stationAuthentication = new StationAuthentication();
 
-    public JwtRequestFilter(MyUserDetailsService userDetailsService, StationsRepository stationsRepository, JwtUtil jwtUtil) {
+    public JwtRequestFilter(MyUserDetailsService userDetailsService, StationsRepository stationsRepository, TokenProvider tokenProvider) {
         this.userDetailsService = userDetailsService;
         this.stationsRepository = stationsRepository;
-        this.jwtUtil = jwtUtil;
+        this.tokenProvider = tokenProvider;
     }
 
     @Override
@@ -47,16 +47,16 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             jwt = authorizationHeader.substring(7);
-            subject = jwtUtil.extractSubject(jwt);
+            subject = tokenProvider.extractSubject(jwt);
         }
 
         if (subject != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            if (jwtUtil.hasRole(jwt, "ROLE_STATION")) {
+            if (tokenProvider.hasRole(jwt, "ROLE_STATION")) {
 
                 Station station = stationsRepository.getOne(Long.parseLong(subject));
 
-                if (jwtUtil.validateTokenForStation(jwt, station)){
+                if (tokenProvider.validateTokenForStation(jwt, station)){
                     SecurityContextHolder.getContext().setAuthentication(stationAuthentication);
                     chain.doFilter(request, response);
                     return;
@@ -65,7 +65,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(subject);
 
-            if (jwtUtil.validateToken(jwt, userDetails)) {
+            if (tokenProvider.validateToken(jwt, userDetails)) {
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());
                 usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

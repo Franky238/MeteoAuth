@@ -6,7 +6,8 @@ import com.meteoauth.MeteoAuth.dto.UserDtoRequest;
 import com.meteoauth.MeteoAuth.dto.UserDtoResponse;
 import com.meteoauth.MeteoAuth.entities.User;
 import com.meteoauth.MeteoAuth.repository.UserRepository;
-import com.meteoauth.MeteoAuth.services.JwtUtil;
+
+import com.meteoauth.MeteoAuth.services.TokenProvider;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,12 +19,12 @@ import java.util.List;
 public class UsersController {
     private final UserRepository userRepository;
     private final UserAssembler userAssembler;
-    private final JwtUtil jwtUtil;
+    private final TokenProvider tokenProvider;
 
-    public UsersController(UserRepository userRepository, UserAssembler userAssembler, JwtUtil jwtUtil) {
+    public UsersController(UserRepository userRepository, UserAssembler userAssembler, TokenProvider tokenProvider) {
         this.userRepository = userRepository;
         this.userAssembler = userAssembler;
-        this.jwtUtil = jwtUtil;
+        this.tokenProvider = tokenProvider;
     }
 
 
@@ -86,7 +87,7 @@ public class UsersController {
 
     @DeleteMapping("/delete")
     public ResponseEntity<Void> deleteThisUser( @RequestHeader(name = "Authorization") String token) {
-        String email = jwtUtil.extractSubject(token);
+        String email = tokenProvider.extractSubject(token);
         User user = userRepository.findByEmail(email);
         if (user == null) {
             throw new ResouceNotFoundException("User not found for this email :: " + email);

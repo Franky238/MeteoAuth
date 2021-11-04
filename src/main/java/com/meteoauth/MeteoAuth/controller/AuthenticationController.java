@@ -10,10 +10,9 @@ import com.meteoauth.MeteoAuth.entities.User;
 import com.meteoauth.MeteoAuth.repository.RoleRepository;
 import com.meteoauth.MeteoAuth.repository.StationsRepository;
 import com.meteoauth.MeteoAuth.repository.UserRepository;
-
-
-import com.meteoauth.MeteoAuth.services.JwtUtil;
 import com.meteoauth.MeteoAuth.services.MyUserDetailsService;
+import com.meteoauth.MeteoAuth.services.TokenProvider;
+
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,11 +23,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.PermitAll;
 import javax.validation.Valid;
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Optional;
+import java.util.Set;
 
 @PermitAll
 @RestController
@@ -36,7 +33,7 @@ import java.util.Optional;
 public class AuthenticationController {
 
     private final AuthenticationManager authenticationManager;
-    private final JwtUtil jwtTokenUtil;
+    private final TokenProvider tokenProvider;
     private final MyUserDetailsService userDetailsService;
     private final UserAssembler userAssembler;
     private final UserRepository userRepository;
@@ -44,9 +41,9 @@ public class AuthenticationController {
     private final StationsRepository stationsRepository;
 
 
-    public AuthenticationController(AuthenticationManager authenticationManager, JwtUtil jwtTokenUtil, MyUserDetailsService userDetailsService, UserAssembler userAssembler, UserRepository userRepository, RoleRepository roleRepository, StationsRepository stationsRepository) {
+    public AuthenticationController(AuthenticationManager authenticationManager, TokenProvider tokenProvider, MyUserDetailsService userDetailsService, UserAssembler userAssembler, UserRepository userRepository, RoleRepository roleRepository, StationsRepository stationsRepository) {
         this.authenticationManager = authenticationManager;
-        this.jwtTokenUtil = jwtTokenUtil;
+        this.tokenProvider = tokenProvider;
         this.userDetailsService = userDetailsService;
         this.userAssembler = userAssembler;
         this.userRepository = userRepository;
@@ -69,7 +66,7 @@ public class AuthenticationController {
 
         final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
 
-        final String jwt = jwtTokenUtil.generateToken(userDetails);
+        final String jwt = tokenProvider.generateToken(userDetails);
 
         return ResponseEntity.ok(new AuthenticationResponse(jwt));
     }
@@ -85,9 +82,9 @@ public class AuthenticationController {
 
         final String jwt;
         if (expiration == null) {
-            jwt = jwtTokenUtil.generateTokenForStation(station.get());
+            jwt = tokenProvider.generateTokenForStation(station.get());
         } else {
-            jwt = jwtTokenUtil.generateTokenForStation(station.get(), expiration);
+            jwt = tokenProvider.generateTokenForStation(station.get(), expiration);
         }
         return ResponseEntity.ok(new AuthenticationResponse(jwt));
     }
@@ -96,18 +93,12 @@ public class AuthenticationController {
     public UserDtoResponse addUser(@RequestBody @Valid UserDtoRequest userDtoRequest) {
         User user = userAssembler.getUser(userDtoRequest);
 
-        user.setRoles(Arrays.asList(roleRepository.findByName("USER")));
+        // user.setRoles(Arrays.asList(roleRepository.findByName("USER")));
+        user.setRoles(Set.of(roleRepository.findByName("USER")));
         user.setEnabled(true);
 
         user = userRepository.save(user);
         return userAssembler.getUserDtoResponse(user);
-    }
-
-    @PostMapping("/googleRegister")
-    public ResponseEntity<Object> addGoogleUser(@RequestBody @Valid String idTokenString) throws GeneralSecurityException, IOException {
-
-return null;
-
     }
 
 }
