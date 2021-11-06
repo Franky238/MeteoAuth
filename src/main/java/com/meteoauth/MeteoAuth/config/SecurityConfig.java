@@ -2,6 +2,7 @@ package com.meteoauth.MeteoAuth.config;
 
 
 import com.meteoauth.MeteoAuth.filtres.JwtRequestFilter;
+import com.meteoauth.MeteoAuth.filtres.TokenAuthenticationFilter;
 import com.meteoauth.MeteoAuth.oAuth2.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -25,6 +26,9 @@ import org.springframework.security.oauth2.client.http.OAuth2ErrorResponseErrorH
 import org.springframework.security.oauth2.core.http.converter.OAuth2AccessTokenResponseHttpMessageConverter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 
@@ -62,7 +66,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.csrf().disable().authorizeRequests().antMatchers("/api/authentication/**", "/api/measured_values/all", "/api/oauth2/**", "/oauth2/**").permitAll()
+        httpSecurity.cors().and().csrf().disable().authorizeRequests().antMatchers("/api/authentication/**", "/api/measured_values/all", "/api/oauth2/**", "/oauth2/**").permitAll()
                 .antMatchers("/api/users", "/api/users/**", "/api/stations/**", "/api/measured_values/by-station/**", "/api/measured_values/all").hasRole("USER")
                 .antMatchers("/api/measured_values/**").hasRole("STATION")
                 .antMatchers("/**").hasRole("ADMIN")
@@ -88,9 +92,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .failureHandler(oAuth2AuthenticationFailureHandler);
 
 
-     //   httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
-       httpSecurity.addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+    //   httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+      httpSecurity.addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
+    }
+
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
+        return source;
     }
 
     @Bean

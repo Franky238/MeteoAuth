@@ -57,9 +57,8 @@ app:
     tokenExpirationMsec: '864000000'
   oauth2:
     authorizedRedirectUris:
-      - http://localhost:4200/oauth2/redirect
       - http://localhost:4200/login
-      - http://localhost:8080/oauth2/authorization/google?redirect_uri=http://localhost:4200/login
+
 
 #logging:
 #  level:

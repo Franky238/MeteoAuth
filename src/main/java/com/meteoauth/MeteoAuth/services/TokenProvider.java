@@ -32,8 +32,14 @@ public class TokenProvider {
 		Date now = new Date();
 		Date expiryDate = new Date(now.getTime() + appProperties.getAuth().getTokenExpirationMsec());
 
-		return Jwts.builder().setSubject(Long.toString(userPrincipal.getUser().getId())).setIssuedAt(new Date()).setExpiration(expiryDate)
-				.signWith(SignatureAlgorithm.HS512, appProperties.getAuth().getTokenSecret()).compact();
+
+		Map<String, Object> claims = new HashMap<>();
+	//	claims.put("authorities", "ROLE_USER");
+		claims.put("authorities", "USER");
+		return Jwts.builder().setClaims(claims).setSubject(Long.toString(userPrincipal.getUser().getId())).setIssuedAt(new Date()).setExpiration(expiryDate)
+				.signWith(SignatureAlgorithm.HS256, appProperties.getAuth().getTokenSecret()).compact();
+
+
 	}
 
 
@@ -58,7 +64,7 @@ public class TokenProvider {
 		} catch (IllegalArgumentException ex) {
 			logger.error("JWT claims string is empty.");
 		}
-		return false;
+			return false;
 	}
 
 	//private final String SECRET_KEY = "amFub3NlYw==";
@@ -102,7 +108,8 @@ public class TokenProvider {
 
 	public String generateToken(UserDetails userDetails) {
 		Map<String, Object> claims = new HashMap<>();
-		claims.put("authorities", "ROLE_USER");
+		//claims.put("authorities", "ROLE_USER");
+		claims.put("authorities", "USER");
 		return createToken(claims, userDetails.getUsername());
 	}
 

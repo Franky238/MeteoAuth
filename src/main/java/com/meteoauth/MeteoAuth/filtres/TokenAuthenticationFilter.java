@@ -1,7 +1,9 @@
-package com.meteoauth.MeteoAuth.oAuth2;
+package com.meteoauth.MeteoAuth.filtres;
 
 
+import com.meteoauth.MeteoAuth.repository.StationsRepository;
 import com.meteoauth.MeteoAuth.services.MyUserDetailsService;
+import com.meteoauth.MeteoAuth.services.StationAuthentication;
 import com.meteoauth.MeteoAuth.services.TokenProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,18 +23,22 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
-
 	@Autowired
-	private TokenProvider tokenProvider;
-
+	private  MyUserDetailsService myUserDetailsService;
 	@Autowired
-	private MyUserDetailsService myUserDetailsService;
+	private  StationsRepository stationsRepository;
+	@Autowired
+	private  TokenProvider tokenProvider;
 
+	private  StationAuthentication stationAuthentication = new StationAuthentication();
 	private static final Logger logger = LoggerFactory.getLogger(TokenAuthenticationFilter.class);
+
+
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 		try {
+
 			String jwt = getJwtFromRequest(request);
 
 			if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {

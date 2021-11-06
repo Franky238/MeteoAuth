@@ -10,16 +10,10 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import java.util.Collection;
 import java.util.Map;
 
-/**
- * 
- * @author Chinna
- *
- */
+
 public class LocalUser extends User implements OAuth2User, OidcUser {
 
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = -2845160792248762779L;
 	private final OidcIdToken idToken;
 	private final OidcUserInfo userInfo;
