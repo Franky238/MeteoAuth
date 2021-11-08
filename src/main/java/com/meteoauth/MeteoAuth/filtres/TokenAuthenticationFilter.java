@@ -1,6 +1,7 @@
 package com.meteoauth.MeteoAuth.filtres;
 
 
+import ch.qos.logback.core.joran.conditional.IfAction;
 import com.meteoauth.MeteoAuth.entities.Station;
 import com.meteoauth.MeteoAuth.repository.StationsRepository;
 import com.meteoauth.MeteoAuth.services.MyUserDetailsService;
@@ -61,7 +62,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 		// station
 		if (subject != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-			if (tokenProvider.hasRole(jwt2, "ROLE_STATION")) {
+			if (tokenProvider.hasRole(jwt2, "STATION_ROLE")) {
 
 				Station station = stationsRepository.getOne(Long.parseLong(subject));
 
@@ -72,9 +73,21 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 				}
 			}
 
-			UserDetails userDetails = this.myUserDetailsService.loadUserByUsername(subject);
+			UserDetails userDetails;
+			if (subject.contains("@")) {
+				userDetails = this.myUserDetailsService.loadUserByUsername(subject);
 
-			if (tokenProvider.validateToken(jwt2, userDetails)) {
+				UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
+						userDetails, null, userDetails.getAuthorities());
+
+				usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+				SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+
+				filterChain.doFilter(request, response);
+				return;
+			}else {
+				userDetails = this.myUserDetailsService.loadUserById(Long.parseLong(subject));
+
 				UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
 						userDetails, null, userDetails.getAuthorities());
 
@@ -85,6 +98,9 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 				return;
 
 			}
+
+
+
 
 		}
 

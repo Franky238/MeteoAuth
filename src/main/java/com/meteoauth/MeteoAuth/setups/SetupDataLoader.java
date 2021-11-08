@@ -43,10 +43,10 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         Privilege writePrivilege = createPrivilegeIfNotFound("WRITE_PRIVILEGE");
 
         List<Privilege> adminPrivileges = Arrays.asList(readPrivilege, writePrivilege);
-        createRoleIfNotFound("ADMIN", adminPrivileges);
-        createRoleIfNotFound("USER", Arrays.asList(readPrivilege));
+        createRoleIfNotFound("ADMIN_ROLE", adminPrivileges);
+        createRoleIfNotFound("USER_ROLE", Arrays.asList(readPrivilege));
 
-        Role adminRole = roleRepository.findByName("ADMIN");
+        Role adminRole = roleRepository.findByName("ADMIN_ROLE");
         User user = new User();
         user.setUsername("admin");
         user.setPassword(passwordEncoder.encode("admin"));

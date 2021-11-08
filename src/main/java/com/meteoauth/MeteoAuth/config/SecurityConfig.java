@@ -67,9 +67,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.cors().and().csrf().disable().authorizeRequests().antMatchers("/api/authentication/**", "/api/measured_values/all", "/api/oauth2/**", "/oauth2/**").permitAll()
-                .antMatchers("/api/users", "/api/users/**", "/api/stations/**", "/api/measured_values/by-station/**", "/api/measured_values/all").hasRole("USER")
-                .antMatchers("/api/measured_values/**").hasRole("STATION")
-                .antMatchers("/**").hasRole("ADMIN")
+                .antMatchers("/api/users", "/api/users/**", "/api/stations/**", "/api/measured_values/by-station/**", "/api/measured_values/all").hasRole("USER_ROLE")
+                .antMatchers("/api/measured_values/**").hasRole("STATION_ROLE")
+                .antMatchers("/**").hasRole("ADMIN_ROLE")
                 .anyRequest().authenticated().and().
                 exceptionHandling().and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()

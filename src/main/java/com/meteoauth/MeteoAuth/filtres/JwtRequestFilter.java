@@ -52,7 +52,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         if (subject != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            if (tokenProvider.hasRole(jwt, "ROLE_STATION")) {
+            if (tokenProvider.hasRole(jwt, "STATION_ROLE")) {
 
                 Station station = stationsRepository.getOne(Long.parseLong(subject));
 
@@ -65,13 +65,13 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(subject);
 
-            if (tokenProvider.validateToken(jwt, userDetails)) {
+           // if (tokenProvider.validateToken(jwt, userDetails)) {
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());
 
                 usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-            }
+          //  }
         }
         chain.doFilter(request, response);
     }

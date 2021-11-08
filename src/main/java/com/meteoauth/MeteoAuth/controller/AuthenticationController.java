@@ -2,7 +2,10 @@ package com.meteoauth.MeteoAuth.controller;
 
 import com.meteoauth.MeteoAuth.assembler.UserAssembler;
 import com.meteoauth.MeteoAuth.config.CurrentUser;
-import com.meteoauth.MeteoAuth.dto.*;
+import com.meteoauth.MeteoAuth.dto.AuthenticationRequest;
+import com.meteoauth.MeteoAuth.dto.AuthenticationResponse;
+import com.meteoauth.MeteoAuth.dto.UserDtoRequest;
+import com.meteoauth.MeteoAuth.dto.UserDtoResponse;
 import com.meteoauth.MeteoAuth.entities.Station;
 import com.meteoauth.MeteoAuth.entities.User;
 import com.meteoauth.MeteoAuth.oAuth2.GeneralUtils;
@@ -12,15 +15,11 @@ import com.meteoauth.MeteoAuth.repository.StationsRepository;
 import com.meteoauth.MeteoAuth.repository.UserRepository;
 import com.meteoauth.MeteoAuth.services.MyUserDetailsService;
 import com.meteoauth.MeteoAuth.services.TokenProvider;
-
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
@@ -101,7 +100,7 @@ public class AuthenticationController {
         User user = userAssembler.getUser(userDtoRequest);
 
         // user.setRoles(Arrays.asList(roleRepository.findByName("USER")));
-        user.setRoles(Set.of(roleRepository.findByName("USER")));
+        user.setRoles(Set.of(roleRepository.findByName("USER_ROLE")));
         user.setEnabled(true);
         user.setName("Fixme");// todo
 
