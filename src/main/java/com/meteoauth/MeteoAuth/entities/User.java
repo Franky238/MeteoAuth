@@ -119,4 +119,17 @@ public class User implements Serializable {
     private Set<Role> roles;
 
 
+
+    private static final long serialVersionUID = 65981149772133526L;
+
+
+    @Column(name = "created_date")//
+    @Temporal(TemporalType.TIMESTAMP)
+    protected Date createdDate;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    protected Date modifiedDate;
+
+
+
 }

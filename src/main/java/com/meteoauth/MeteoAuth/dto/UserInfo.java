@@ -1,4 +1,4 @@
-package com.meteoauth.MeteoAuth.oAuth2;
+package com.meteoauth.MeteoAuth.dto;
 
 import lombok.Value;
 

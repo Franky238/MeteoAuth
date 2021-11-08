@@ -2,10 +2,7 @@ package com.meteoauth.MeteoAuth.controller;
 
 import com.meteoauth.MeteoAuth.assembler.UserAssembler;
 import com.meteoauth.MeteoAuth.config.CurrentUser;
-import com.meteoauth.MeteoAuth.dto.AuthenticationRequest;
-import com.meteoauth.MeteoAuth.dto.AuthenticationResponse;
-import com.meteoauth.MeteoAuth.dto.UserDtoRequest;
-import com.meteoauth.MeteoAuth.dto.UserDtoResponse;
+import com.meteoauth.MeteoAuth.dto.*;
 import com.meteoauth.MeteoAuth.entities.Station;
 import com.meteoauth.MeteoAuth.entities.User;
 import com.meteoauth.MeteoAuth.oAuth2.GeneralUtils;
@@ -22,6 +19,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,6 +44,7 @@ public class AuthenticationController {
     private final StationsRepository stationsRepository;
 
 
+
     public AuthenticationController(AuthenticationManager authenticationManager, TokenProvider tokenProvider, MyUserDetailsService userDetailsService, UserAssembler userAssembler, UserRepository userRepository, RoleRepository roleRepository, StationsRepository stationsRepository) {
         this.authenticationManager = authenticationManager;
         this.tokenProvider = tokenProvider;
@@ -58,6 +58,7 @@ public class AuthenticationController {
 
     @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
+
 
         try {
             authenticationManager.authenticate(
@@ -73,6 +74,8 @@ public class AuthenticationController {
         final String jwt = tokenProvider.generateToken(userDetails);
 
         return ResponseEntity.ok(new AuthenticationResponse(jwt));
+
+
     }
 
     @RequestMapping(value = "/authenticate-station/{id}", method = RequestMethod.GET)

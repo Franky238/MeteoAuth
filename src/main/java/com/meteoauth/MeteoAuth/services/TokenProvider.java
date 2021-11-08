@@ -3,9 +3,11 @@ package com.meteoauth.MeteoAuth.services;
 import com.meteoauth.MeteoAuth.entities.Station;
 import com.meteoauth.MeteoAuth.oAuth2.AppProperties;
 import com.meteoauth.MeteoAuth.oAuth2.LocalUser;
+import com.meteoauth.MeteoAuth.repository.UserRepository;
 import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -21,12 +23,16 @@ public class TokenProvider {
 	private static final Logger logger = LoggerFactory.getLogger(TokenProvider.class);
 
 	private AppProperties appProperties;
+	@Autowired
+	private UserRepository userRepository;
 
 	public TokenProvider(AppProperties appProperties) {
 		this.appProperties = appProperties;
 	}
 
 	public String createToken(Authentication authentication) {
+		System.out.printf(authentication.getPrincipal().toString());
+		//LocalUser userPrincipal = (LocalUser) authentication.getPrincipal();
 		LocalUser userPrincipal = (LocalUser) authentication.getPrincipal();
 
 		Date now = new Date();
@@ -49,25 +55,6 @@ public class TokenProvider {
 		return Long.parseLong(claims.getSubject());
 	}
 
-	public boolean validateToken(String authToken) {
-		try {
-			Jwts.parser().setSigningKey(appProperties.getAuth().getTokenSecret()).parseClaimsJws(authToken);
-			return true;
-		} catch (SignatureException ex) {
-			logger.error("Invalid JWT signature");
-		} catch (MalformedJwtException ex) {
-			logger.error("Invalid JWT token");
-		} catch (ExpiredJwtException ex) {
-			logger.error("Expired JWT token");
-		} catch (UnsupportedJwtException ex) {
-			logger.error("Unsupported JWT token");
-		} catch (IllegalArgumentException ex) {
-			logger.error("JWT claims string is empty.");
-		}
-			return false;
-	}
-
-	//private final String SECRET_KEY = "amFub3NlYw==";
 
 	public String extractSubject(String token) {
 		if (token.startsWith("Bearer ")) {
@@ -76,12 +63,6 @@ public class TokenProvider {
 		return extractClaim(token, Claims::getSubject);
 	}
 
-//    public String extractStationID(String token) {
-//        if (token.startsWith("Bearer ")) {
-//            token = token.substring(7);
-//        }
-//        return extractClaim(token, Claims::getId);
-//    }
 
 	public Date extractExpiration(String token) {
 		return extractClaim(token, Claims::getExpiration);
@@ -152,8 +133,27 @@ public class TokenProvider {
 		return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
 	}
 
+
 	public Boolean validateTokenForStation(String token, Station station) {
 		final Long id = Long.parseLong(extractSubject(token));
 		return (id.equals(station.getId())); //todo && !isTokenExpired(token)
+	}
+
+	public boolean validateToken(String authToken) {
+		try {
+			Jwts.parser().setSigningKey(appProperties.getAuth().getTokenSecret()).parseClaimsJws(authToken);
+			return true;
+		} catch (SignatureException ex) {
+			logger.error("Invalid JWT signature");
+		} catch (MalformedJwtException ex) {
+			logger.error("Invalid JWT token");
+		} catch (ExpiredJwtException ex) {
+			logger.error("Expired JWT token");
+		} catch (UnsupportedJwtException ex) {
+			logger.error("Unsupported JWT token");
+		} catch (IllegalArgumentException ex) {
+			logger.error("JWT claims string is empty.");
+		}
+		return false;
 	}
 }

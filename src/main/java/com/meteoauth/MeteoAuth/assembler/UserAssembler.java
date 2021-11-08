@@ -16,7 +16,7 @@ public class UserAssembler {
 
 
     public UserAssembler() {
-        this.passwordEncoder = new BCryptPasswordEncoder();
+        this.passwordEncoder = new BCryptPasswordEncoder(10);
     }
 
 

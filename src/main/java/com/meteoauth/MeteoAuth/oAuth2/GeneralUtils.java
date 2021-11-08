@@ -1,6 +1,7 @@
 package com.meteoauth.MeteoAuth.oAuth2;
 
 
+import com.meteoauth.MeteoAuth.dto.UserInfo;
 import com.meteoauth.MeteoAuth.entities.Role;
 
 import com.meteoauth.MeteoAuth.entities.User;
