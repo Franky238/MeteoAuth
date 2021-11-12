@@ -17,6 +17,7 @@ import com.meteoauth.MeteoAuth.services.MyUserDetailsService;
 import com.meteoauth.MeteoAuth.services.TokenProvider;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -87,11 +88,11 @@ public class AuthenticationController {
         }
 
         final String jwt;
-        if (expiration == null) {
+//        if (expiration == null) {
             jwt = tokenProvider.generateTokenForStation(station.get());
-        } else {
-            jwt = tokenProvider.generateTokenForStation(station.get(), expiration);
-        }
+//        } else {
+//            jwt = tokenProvider.generateTokenForStation(station.get(), expiration);
+//        }
         return ResponseEntity.ok(new AuthenticationResponse(jwt));
     }
 
@@ -109,7 +110,7 @@ public class AuthenticationController {
     }
 
     @GetMapping("/user/me")
- ///   @PreAuthorize("hasRole('ROLE_USER')")
+   /// @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<?> getCurrentUser(@CurrentUser LocalUser user) {
         return ResponseEntity.ok(GeneralUtils.buildUserInfo(user));
     }

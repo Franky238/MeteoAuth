@@ -14,7 +14,7 @@ public class StationAuthentication implements Authentication {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList((GrantedAuthority) () -> "ROLE_STATION");
+        return Collections.singletonList((GrantedAuthority) () -> "ROLE_STATION_ROLE");
     }
 
     @Override

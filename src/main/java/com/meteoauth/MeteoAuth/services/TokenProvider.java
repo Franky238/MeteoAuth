@@ -28,13 +28,13 @@ public class TokenProvider {
 	}
 
 	public String createToken(Authentication authentication) {
-		LocalUser userPrincipal = (LocalUser) authentication.getPrincipal();
+		//LocalUser userPrincipal = (LocalUser) authentication.getPrincipal();
 		Date now = new Date();
 		Date expiryDate = new Date(now.getTime() + appProperties.getAuth().getTokenExpirationMsec());
 
 		Map<String, Object> claims = new HashMap<>();
 		claims.put("authorities", "USER_ROLE");
-		System.out.println(((LocalUser) authentication.getPrincipal()).getUser().getEmail());
+		//System.out.println(((LocalUser) authentication.getPrincipal()).getUser().getEmail());
 		//String subject = Long.toString(userPrincipal.getUser().getId());
 		String subject = ((LocalUser) authentication.getPrincipal()).getUser().getEmail();
 		return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date())
@@ -91,13 +91,14 @@ public class TokenProvider {
 		Map<String, Object> claims = new HashMap<>();
 		claims.put("authorities", "STATION_ROLE");
 		return createStationToken(claims, station.getId().toString());
+
 	}
 
-	public String generateTokenForStation(Station station, Date expiration) throws Exception {
-		Map<String, Object> claims = new HashMap<>();
-		claims.put("authorities", "STATION_ROLE");
-		return createStationToken(claims, station.getId().toString(), expiration);
-	}
+//	public String generateTokenForStation(Station station, Date expiration) throws Exception {
+//		Map<String, Object> claims = new HashMap<>();
+//		claims.put("authorities", "STATION_ROLE");
+//		return createStationToken(claims, station.getId().toString(), expiration);
+//	}
 
 	private String createToken(Map<String, Object> claims, String subject) {
 		Date now = new Date();
@@ -130,6 +131,7 @@ public class TokenProvider {
 	public Boolean validateTokenForStation(String token, Station station) {
 		final Long id = Long.parseLong(extractSubject(token));
 		return (id.equals(station.getId())); //todo && !isTokenExpired(token)
+
 	}
 
 	public boolean validateToken(String authToken) {
