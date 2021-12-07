@@ -34,7 +34,7 @@ public class TokenProvider {
 
 		Map<String, Object> claims = new HashMap<>();
 		claims.put("authorities", "USER_ROLE");
-		//System.out.println(((LocalUser) authentication.getPrincipal()).getUser().getEmail());
+
 		//String subject = Long.toString(userPrincipal.getUser().getId());
 		String subject = ((LocalUser) authentication.getPrincipal()).getUser().getEmail();
 		return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date())

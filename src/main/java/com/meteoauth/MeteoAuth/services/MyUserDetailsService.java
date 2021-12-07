@@ -20,6 +20,8 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Transactional
 @Service
@@ -57,40 +59,24 @@ public class MyUserDetailsService implements UserDetailsService {
            // grantedAuthorities.add(new SimpleGrantedAuthority(role.getName()));
         }
 
-
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(), user.getPassword(), user.isEnabled() , true, true,
                 true, grantedAuthorities); //todo
 
-
-
     }
-
-
-
-
-//    private final UserService userService;
-//
-//    public LocalUserDetailService(UserService userService) {
-//        this.userService = userService;
-//    }
-
-//    @Override
-//    public LocalUser loadUserByUsername(final String email) throws UsernameNotFoundException {
-//        User user = userService.findUserByEmail(email);
-//        if (user == null) {
-//            throw new UsernameNotFoundException("User " + email + " was not found in the database");
-//        }
-//        return createLocalUser(user);
-//    }
-
 
     public LocalUser loadUserById(Long id) {
         User user = userRepository.findUserById(id).orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
-        return createLocalUser(user);
+
+        Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
+        Set<Role> roles = user.getRoles(); // TODO set role
+        for (Role role : roles) {
+            System.out.println(role.getName());
+            grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName()));
+            // grantedAuthorities.add(new SimpleGrantedAuthority(role.getName()));
+        }
+        return new LocalUser(user.getEmail(), user.getPassword(), user.isEnabled(), true, true, true, GeneralUtils.buildSimpleGrantedAuthorities(roles), user);
     }
 
-    private LocalUser createLocalUser(User user) {
-        return new LocalUser(user.getEmail(), user.getPassword(), user.isEnabled(), true, true, true, GeneralUtils.buildSimpleGrantedAuthorities(user.getRoles()), user);
-    }
+
 }
