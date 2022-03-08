@@ -14,9 +14,8 @@ import java.util.List;
 public class UserAssembler {
     private final PasswordEncoder passwordEncoder;
 
-
     public UserAssembler() {
-        this.passwordEncoder = new BCryptPasswordEncoder(10);
+        this.passwordEncoder = new BCryptPasswordEncoder(11);
     }
 
 
@@ -34,7 +33,6 @@ public class UserAssembler {
         user.setPassword(passwordEncoder.encode(userDtoRequest.getPassword()));
         user.setEmail(userDtoRequest.getEmail());
         user.setCity(userDtoRequest.getCity());
-
         return user;
     }
 
@@ -49,5 +47,4 @@ public class UserAssembler {
         }
         return userDtoResponseList;
     }
-
 }

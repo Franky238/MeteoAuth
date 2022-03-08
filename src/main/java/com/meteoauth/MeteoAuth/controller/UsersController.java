@@ -27,7 +27,6 @@ public class UsersController {
         this.tokenProvider = tokenProvider;
     }
 
-
     @GetMapping("/{email}")
     public ResponseEntity<UserDtoResponse> findByEmail(@PathVariable("email") String email) {
         User user = userRepository.findByEmail(email);
@@ -37,14 +36,7 @@ public class UsersController {
 
         return ResponseEntity.ok().body(userAssembler.getUserDtoResponse(user));
     }
-//    @GetMapping("/{id}")
-//    public ResponseEntity<UserDtoResponse> findById(@PathVariable("id") Long userId) {
-//        User user = usersRepository.findById(userId).orElseThrow(
-//                () -> new ResouceNotFoundException("User not found" + userId));
-//        return ResponseEntity.ok().body(userAssembler.getUserDtoResponse(user));
-//    }
 
-  //  @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("")
     public ResponseEntity<List<UserDtoResponse>> getUsers() {
         Iterable<User> userList = userRepository.findAll();
@@ -53,40 +45,36 @@ public class UsersController {
 
     @PutMapping("{email}")
     public ResponseEntity<UserDtoResponse> updateUser(@PathVariable("email") String email,
-                                                      @RequestBody @Valid UserDtoRequest userDtoRequest) {
+                                                      @RequestBody @Valid UserDtoRequest userDtoRequest,
+                                                      @RequestHeader(name = "Authorization") String token) {
+        String tokenEmail = tokenProvider.extractSubject(token);
+        if (tokenEmail.equals(email)) {
+            return ResponseEntity.badRequest().build();
+        }
         User user = userRepository.findByEmail(email);
         if (user == null) {
             throw new ResouceNotFoundException("User not found for this email :: " + email);
         }
-        User newUser =  userAssembler.getUser(userDtoRequest);
-        if(newUser.getUsername() != null ||!newUser.getUsername().isEmpty() ){
+
+        User newUser = userAssembler.getUser(userDtoRequest);
+        if (!newUser.getUsername().isEmpty()) {
             user.setUsername(newUser.getUsername());
         }
-        if(!newUser.getPassword().isEmpty()){ //todo not working
+        if (!newUser.getPassword().isEmpty()) {
             user.setPassword(newUser.getPassword());
         }
         if (!newUser.getEmail().isEmpty()) {
             user.setEmail(newUser.getEmail());
         }
-        if(!newUser.getCity().isEmpty()){
+        if (!newUser.getCity().isEmpty()) {
             user.setCity(newUser.getCity());
         }
-
         userRepository.save(user);
         return ResponseEntity.ok(userAssembler.getUserDtoResponse(user));
     }
-//    @PutMapping("{id}")
-//    public ResponseEntity<UserDtoResponse> updateUser(@PathVariable(value = "id") Long userId,
-//                                                      @RequestBody UserDtoRequest userDtoRequest) {
-//        User user = usersRepository.findById(userId)
-//                .orElseThrow(() -> new ResouceNotFoundException("User not found for this id :: " + userId));
-//        user.setEmail(userDtoRequest.getEmail());
-//        usersRepository.save(user);
-//        return ResponseEntity.ok(userAssembler.getUserDtoResponse(user));
-//    }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<Void> deleteThisUser( @RequestHeader(name = "Authorization") String token) {
+    public ResponseEntity<Void> deleteThisUser(@RequestHeader(name = "Authorization") String token) {
         String email = tokenProvider.extractSubject(token);
         User user = userRepository.findByEmail(email);
         if (user == null) {

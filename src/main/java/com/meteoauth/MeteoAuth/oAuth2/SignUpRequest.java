@@ -5,10 +5,6 @@ import lombok.Data;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
-/**
- * @author Chinna
- * @since 26/3/18
- */
 @Data
 @PasswordMatches
 public class SignUpRequest {
@@ -18,7 +14,7 @@ public class SignUpRequest {
 	private String providerUserId;
 
 	@NotEmpty
-	private String displayName;
+	private String username;
 
 	@NotEmpty
 	private String email;
@@ -31,9 +27,9 @@ public class SignUpRequest {
 	@NotEmpty
 	private String matchingPassword;
 
-	public SignUpRequest(String providerUserId, String displayName, String email, String password, SocialProvider socialProvider) {
+	public SignUpRequest(String providerUserId, String username, String email, String password, SocialProvider socialProvider) {
 		this.providerUserId = providerUserId;
-		this.displayName = displayName;
+		this.username = username;
 		this.email = email;
 		this.password = password;
 		this.socialProvider = socialProvider;

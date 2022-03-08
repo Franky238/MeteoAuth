@@ -21,18 +21,16 @@ import static com.meteoauth.MeteoAuth.oAuth2.HttpCookieOAuth2AuthorizationReques
 @Component
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
-    private TokenProvider tokenProvider;
+    private final TokenProvider tokenProvider;
 
+    private final AppProperties appProperties;
 
-    private AppProperties appProperties;
-
-    private HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
+    private final HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
 
     @Autowired
     OAuth2AuthenticationSuccessHandler(TokenProvider tokenProvider, AppProperties appProperties,
                                        HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository) {
         this.tokenProvider = tokenProvider;
-
         this.appProperties = appProperties;
         this.httpCookieOAuth2AuthorizationRequestRepository = httpCookieOAuth2AuthorizationRequestRepository;
     }
@@ -59,9 +57,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         }
 
         String targetUrl = redirectUri.orElse(getDefaultTargetUrl());
-
         String token = tokenProvider.createToken(authentication);
-
         return UriComponentsBuilder.fromUriString(targetUrl).queryParam("token", token).build().toUriString();
     }
 
@@ -74,13 +70,8 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         URI clientRedirectUri = URI.create(uri);
 
         return appProperties.getOauth2().getAuthorizedRedirectUris().stream().anyMatch(authorizedRedirectUri -> {
-            // Only validate host and port. Let the clients use different paths if they want
-            // to
             URI authorizedURI = URI.create(authorizedRedirectUri);
-            if (authorizedURI.getHost().equalsIgnoreCase(clientRedirectUri.getHost()) && authorizedURI.getPort() == clientRedirectUri.getPort()) {
-                return true;
-            }
-            return false;
+            return authorizedURI.getHost().equalsIgnoreCase(clientRedirectUri.getHost()) && authorizedURI.getPort() == clientRedirectUri.getPort();
         });
     }
 }

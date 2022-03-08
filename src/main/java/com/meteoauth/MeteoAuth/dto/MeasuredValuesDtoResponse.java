@@ -1,6 +1,5 @@
 package com.meteoauth.MeteoAuth.dto;
 
-import com.meteoauth.MeteoAuth.entities.Station;
 import lombok.Data;
 
 import java.sql.Timestamp;

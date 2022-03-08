@@ -5,6 +5,7 @@ import com.meteoauth.MeteoAuth.dto.UserInfo;
 import com.meteoauth.MeteoAuth.entities.Role;
 
 import com.meteoauth.MeteoAuth.entities.User;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.ArrayList;
@@ -33,8 +34,8 @@ public class GeneralUtils {
 	}
 
 	public static UserInfo buildUserInfo(LocalUser localUser) {
-		List<String> roles = localUser.getAuthorities().stream().map(item -> item.getAuthority()).collect(Collectors.toList());
+		List<String> roles = localUser.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
 		User user = localUser.getUser();
-		return new UserInfo(user.getId().toString(), user.getDisplayName(), user.getEmail(), roles);
+		return new UserInfo(user.getId().toString(), user.getUsername(), user.getEmail(), roles);
 	}
 }

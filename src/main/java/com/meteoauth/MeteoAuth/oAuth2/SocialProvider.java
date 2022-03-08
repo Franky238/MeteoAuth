@@ -1,14 +1,10 @@
 package com.meteoauth.MeteoAuth.oAuth2;
 
-/**
- * @author Chinna
- * @since 26/3/18
- */
 public enum SocialProvider {
 
 	FACEBOOK("facebook"), TWITTER("twitter"), LINKEDIN("linkedin"), GOOGLE("google"), GITHUB("github"), LOCAL("local");
 
-	private String providerType;
+	private final String providerType;
 
 	public String getProviderType() {
 		return providerType;

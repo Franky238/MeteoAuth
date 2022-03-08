@@ -51,10 +51,9 @@ public class StationsAssembler {
             temp.setPhone(station.getPhone());
             temp.setRegistration_time(station.getRegistration_time());
             temp.setTitle(station.getTitle());
-            temp.setUser(userAssembler.getUserDtoResponse(station.getUser()));//todo userDtoResponse
+            temp.setUser(userAssembler.getUserDtoResponse(station.getUser()));
             stationsDtoResponses.add(temp);
         }
         return stationsDtoResponses;
     }
-
 }

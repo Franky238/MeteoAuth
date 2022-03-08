@@ -13,64 +13,63 @@ import java.util.Map;
 
 public class LocalUser extends User implements OAuth2User, OidcUser {
 
+    private static final long serialVersionUID = -2845160792248762779L;
+    private final OidcIdToken idToken;
+    private final OidcUserInfo userInfo;
+    private final com.meteoauth.MeteoAuth.entities.User user;
+    private Map<String, Object> attributes;
 
-	private static final long serialVersionUID = -2845160792248762779L;
-	private final OidcIdToken idToken;
-	private final OidcUserInfo userInfo;
-	private Map<String, Object> attributes;
-	private com.meteoauth.MeteoAuth.entities.User user;
-
-	public LocalUser(final String userID, final String password, final boolean enabled, final boolean accountNonExpired, final boolean credentialsNonExpired,
+    public LocalUser(final String userID, final String password, final boolean enabled, final boolean accountNonExpired, final boolean credentialsNonExpired,
                      final boolean accountNonLocked, final Collection<? extends GrantedAuthority> authorities, final com.meteoauth.MeteoAuth.entities.User user) {
-		this(userID, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities, user, null, null);
-	}
+        this(userID, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities, user, null, null);
+    }
 
-	public LocalUser(final String userID, final String password, final boolean enabled, final boolean accountNonExpired, final boolean credentialsNonExpired,
+    public LocalUser(final String userID, final String password, final boolean enabled, final boolean accountNonExpired, final boolean credentialsNonExpired,
                      final boolean accountNonLocked, final Collection<? extends GrantedAuthority> authorities, final com.meteoauth.MeteoAuth.entities.User user, OidcIdToken idToken,
                      OidcUserInfo userInfo) {
-		super(userID, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
-		this.user = user;
-		this.idToken = idToken;
-		this.userInfo = userInfo;
-	}
+        super(userID, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
+        this.user = user;
+        this.idToken = idToken;
+        this.userInfo = userInfo;
+    }
 
-	public static LocalUser create(com.meteoauth.MeteoAuth.entities.User user, Map<String, Object> attributes, OidcIdToken idToken, OidcUserInfo userInfo) {
-		LocalUser localUser = new LocalUser(user.getEmail(), user.getPassword(), user.isEnabled(), true, true, true, GeneralUtils.buildSimpleGrantedAuthorities(user.getRoles()),
-				user, idToken, userInfo);
-		localUser.setAttributes(attributes);
-		return localUser;
-	}
+    public static LocalUser create(com.meteoauth.MeteoAuth.entities.User user, Map<String, Object> attributes, OidcIdToken idToken, OidcUserInfo userInfo) {
+        LocalUser localUser = new LocalUser(user.getEmail(), user.getPassword(), user.isEnabled(), true, true, true, GeneralUtils.buildSimpleGrantedAuthorities(user.getRoles()),
+                user, idToken, userInfo);
+        localUser.setAttributes(attributes);
+        return localUser;
+    }
 
-	public void setAttributes(Map<String, Object> attributes) {
-		this.attributes = attributes;
-	}
+    public void setAttributes(Map<String, Object> attributes) {
+        this.attributes = attributes;
+    }
 
-	@Override
-	public String getName() {
-		return this.user.getDisplayName();
-	}
+    @Override
+    public String getName() {
+        return this.user.getUsername();
+    }
 
-	@Override
-	public Map<String, Object> getAttributes() {
-		return this.attributes;
-	}
+    @Override
+    public Map<String, Object> getAttributes() {
+        return this.attributes;
+    }
 
-	@Override
-	public Map<String, Object> getClaims() {
-		return this.attributes;
-	}
+    @Override
+    public Map<String, Object> getClaims() {
+        return this.attributes;
+    }
 
-	@Override
-	public OidcUserInfo getUserInfo() {
-		return this.userInfo;
-	}
+    @Override
+    public OidcUserInfo getUserInfo() {
+        return this.userInfo;
+    }
 
-	@Override
-	public OidcIdToken getIdToken() {
-		return this.idToken;
-	}
+    @Override
+    public OidcIdToken getIdToken() {
+        return this.idToken;
+    }
 
-	public com.meteoauth.MeteoAuth.entities.User getUser() {
-		return user;
-	}
+    public com.meteoauth.MeteoAuth.entities.User getUser() {
+        return user;
+    }
 }

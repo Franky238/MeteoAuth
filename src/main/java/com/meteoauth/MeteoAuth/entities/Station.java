@@ -1,6 +1,5 @@
 package com.meteoauth.MeteoAuth.entities;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,13 +9,12 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Set;
 
-
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "tb_station")
-@NoArgsConstructor
-@AllArgsConstructor//added
 public class Station {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "native")

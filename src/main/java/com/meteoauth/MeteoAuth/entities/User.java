@@ -1,19 +1,14 @@
 package com.meteoauth.MeteoAuth.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-
-
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.util.Date;
 import java.util.Set;
 
 @Getter
@@ -21,7 +16,7 @@ import java.util.Set;
 @Entity
 @Table(name = "tb_user")
 @NoArgsConstructor
-@AllArgsConstructor//added
+@AllArgsConstructor
 public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "native")
@@ -44,70 +39,22 @@ public class User implements Serializable {
     @Basic
     @Column
     private Timestamp registration_time = new Timestamp(System.currentTimeMillis());
-    //  todo correct way?
-    //    @Basic(optional = false)
-    //    @Column(name = "LastTouched", insertable = false, updatable = false)
-    //    @Temporal(TemporalType.TIMESTAMP)
-    //    private Date lastTouched;
 
     @Basic
     @Column
     private String city;
 
-   // @Column(name = "enabled", columnDefinition = "BIT", length = 1)
     private boolean enabled;
-
-    @Basic
-    @Column
-    private boolean tokenExpired;
 
     @OneToMany(mappedBy = "user")
     private Set<Station> stations;
 
 
 
-    @Column(nullable = false)
-    private String name;
-
-    private String imageUrl;
-
-    @Column(nullable = false)
-    private Boolean emailVerified = false;
-
-
-
-
-
-   // private static final long serialVersionUID = 65981149772133526L;
-
-
-
     @Column(name = "PROVIDER_USER_ID")
     private String providerUserId;
 
-
-
-
-
-    @Column(name = "DISPLAY_NAME")
-    private String displayName;
-
-//
-// //   @Column(name = "created_date", nullable = false, updatable = false)
-//    @Temporal(TemporalType.TIMESTAMP)
-//    protected Date createdDate;
-//
-//   @Temporal(TemporalType.TIMESTAMP)
-//    protected Date modifiedDate;
-
     private String provider;
-
-//    // bi-directional many-to-many association to Role
-//    @JsonIgnore
-//    @ManyToMany
-//    @JoinTable(name = "user_role", joinColumns = { @JoinColumn(name = "USER_ID") }, inverseJoinColumns = { @JoinColumn(name = "ROLE_ID") })
-//    private Set<Role> roles;
-
 
     @ManyToMany
     @JoinTable(
@@ -117,19 +64,4 @@ public class User implements Serializable {
             inverseJoinColumns = @JoinColumn(
                     name = "role_id", referencedColumnName = "id"))
     private Set<Role> roles;
-
-
-
-    private static final long serialVersionUID = 65981149772133526L;
-
-
-    @Column(name = "created_date")//
-    @Temporal(TemporalType.TIMESTAMP)
-    protected Date createdDate;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    protected Date modifiedDate;
-
-
-
 }

@@ -29,7 +29,7 @@ public class StationsController {
         this.tokenProvider = tokenProvider;
     }
 
-    @PostMapping("/add")//todo add->create
+    @PostMapping("/add")
     public StationsDtoResponse createStation(@RequestBody @Valid StationDtoRequest stationDtoRequest, @RequestHeader(name = "Authorization") String token) {
         String email = tokenProvider.extractSubject(token);
         Station station = stationsAssembler.createStation(stationDtoRequest, email);
@@ -43,27 +43,28 @@ public class StationsController {
         return ResponseEntity.ok().body(stationsAssembler.getStationDtoRequestList(stationsList));
     }
 
-    @GetMapping("/byUser") //todo ---------------------------------------------------------------------
+    @GetMapping("/byUser")
     public ResponseEntity<List<StationsDtoResponse>> getUserStations(@RequestHeader(name = "Authorization") String token) {
         String email = tokenProvider.extractSubject(token);
         Iterable<Station> stationsList = stationsRepository.findByUser(userRepository.findByEmail(email));
         return ResponseEntity.ok().body(stationsAssembler.getStationDtoRequestList(stationsList));
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUserStation(@PathVariable("id") Long id, @RequestHeader(name = "Authorization") String token) {
-
         String email = tokenProvider.extractSubject(token);
         Iterable<Station> stationsList = stationsRepository.findByUser(userRepository.findByEmail(email));
-
         Optional<Station> stationToDelete = stationsRepository.findById(id);
+
+        System.out.println(stationsList.toString());
+        System.out.println(stationToDelete.toString());
+
         for (Station station:stationsList){
-            if (station.equals(stationToDelete)){
+            if (station.getId().equals(stationToDelete.get().getId())){
                 stationToDelete.ifPresent(stationsRepository::delete);
                 return ResponseEntity.ok().build();
             }
         }
         return ResponseEntity.notFound().build();
-
     }
 }

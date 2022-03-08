@@ -1,6 +1,8 @@
 package com.meteoauth.MeteoAuth.entities;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -8,6 +10,8 @@ import java.sql.Timestamp;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "tb_measured_value")
 public class MeasuredValue {

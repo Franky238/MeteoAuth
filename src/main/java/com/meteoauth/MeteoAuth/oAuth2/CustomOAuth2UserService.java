@@ -1,6 +1,5 @@
 package com.meteoauth.MeteoAuth.oAuth2;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -21,10 +20,14 @@ import java.util.Map;
 
 @Service
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
-	@Autowired
-	private UserService userService;
-	@Autowired
-	private Environment env;
+
+	private final UserService userService;
+	private final Environment env;
+
+	public CustomOAuth2UserService(UserService userService, Environment env) {
+		this.userService = userService;
+		this.env = env;
+	}
 
 	@Override
 	public OAuth2User loadUser(OAuth2UserRequest oAuth2UserRequest) throws OAuth2AuthenticationException {
@@ -40,8 +43,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 			throw ex;
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			// Throwing an instance of AuthenticationException will trigger the
-			// OAuth2AuthenticationFailureHandler
 			throw new OAuth2AuthenticationProcessingException(ex.getMessage(), ex.getCause());
 		}
 	}

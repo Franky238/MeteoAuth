@@ -4,13 +4,11 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
-import java.beans.ConstructorProperties;
 import java.util.Collection;
 import java.util.Collections;
 
 @AllArgsConstructor
 public class StationAuthentication implements Authentication {
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -39,7 +37,6 @@ public class StationAuthentication implements Authentication {
 
     @Override
     public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
-
     }
 
     @Override

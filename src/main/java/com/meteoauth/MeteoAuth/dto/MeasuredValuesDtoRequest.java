@@ -2,8 +2,6 @@ package com.meteoauth.MeteoAuth.dto;
 
 import lombok.Data;
 
-import java.sql.Timestamp;
-
 @Data
 public class MeasuredValuesDtoRequest {
     private int humidity;

@@ -5,7 +5,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
-public class AuthenticationResponse implements Serializable {
+public class UserAuthenticationResponse implements Serializable {
     private final String jwt;
+    private final String refreshToken;
 }
-

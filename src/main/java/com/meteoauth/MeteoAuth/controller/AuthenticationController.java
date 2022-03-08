@@ -2,10 +2,7 @@ package com.meteoauth.MeteoAuth.controller;
 
 import com.meteoauth.MeteoAuth.assembler.UserAssembler;
 import com.meteoauth.MeteoAuth.config.CurrentUser;
-import com.meteoauth.MeteoAuth.dto.AuthenticationRequest;
-import com.meteoauth.MeteoAuth.dto.AuthenticationResponse;
-import com.meteoauth.MeteoAuth.dto.UserDtoRequest;
-import com.meteoauth.MeteoAuth.dto.UserDtoResponse;
+import com.meteoauth.MeteoAuth.dto.*;
 import com.meteoauth.MeteoAuth.entities.Station;
 import com.meteoauth.MeteoAuth.entities.User;
 import com.meteoauth.MeteoAuth.oAuth2.GeneralUtils;
@@ -15,9 +12,9 @@ import com.meteoauth.MeteoAuth.repository.StationsRepository;
 import com.meteoauth.MeteoAuth.repository.UserRepository;
 import com.meteoauth.MeteoAuth.services.MyUserDetailsService;
 import com.meteoauth.MeteoAuth.services.TokenProvider;
-import org.springframework.format.annotation.DateTimeFormat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -26,7 +23,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.PermitAll;
 import javax.validation.Valid;
-import java.util.Date;
 import java.util.Optional;
 import java.util.Set;
 
@@ -43,8 +39,6 @@ public class AuthenticationController {
     private final RoleRepository roleRepository;
     private final StationsRepository stationsRepository;
 
-
-
     public AuthenticationController(AuthenticationManager authenticationManager, TokenProvider tokenProvider, MyUserDetailsService userDetailsService, UserAssembler userAssembler, UserRepository userRepository, RoleRepository roleRepository, StationsRepository stationsRepository) {
         this.authenticationManager = authenticationManager;
         this.tokenProvider = tokenProvider;
@@ -53,66 +47,75 @@ public class AuthenticationController {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.stationsRepository = stationsRepository;
-
     }
 
     @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
-
-
         try {
+            System.out.println(authenticationRequest.getUsername());
+            System.out.println(authenticationRequest.getPassword());
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword())
             );
-
         } catch (BadCredentialsException e) {
             throw new Exception("Incorrect username or password", e);
         }
 
         final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
-
         final String jwt = tokenProvider.generateToken(userDetails);
+        final String refreshToken = tokenProvider.generateRefreshToken(userDetails);
 
-        return ResponseEntity.ok(new AuthenticationResponse(jwt));
+        return ResponseEntity.ok(new UserAuthenticationResponse(jwt, refreshToken));
+    }
 
 
+    @RequestMapping(value = "/refreshToken", method = RequestMethod.POST)
+    public ResponseEntity<?> refreshToken(@RequestBody @Valid RefreshTokenRequest refreshTokenRequest) throws Exception {
+        try {
+            final String authorizationHeader = refreshTokenRequest.getJwt();
+            String subject = null;
+            String refreshToken = null;
+
+            if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+                refreshToken = authorizationHeader.substring(7);
+                subject = tokenProvider.extractSubject(refreshToken);
+            }
+            if (!tokenProvider.validateToken(refreshToken)) {
+                throw new Exception("Invalid refresh token");
+            }
+
+            UserDetails userDetails = userDetailsService.loadUserByUsername(subject);
+            final String token = tokenProvider.generateToken(userDetails);
+
+            return ResponseEntity.ok(new UserAuthenticationResponse(token, refreshToken));
+        } catch (BadCredentialsException e) {
+            throw new Exception("Refresh token missing", e);
+        }
     }
 
     @RequestMapping(value = "/authenticate-station/{id}", method = RequestMethod.GET)
-    public ResponseEntity<?> createAuthenticationTokenForStation(@PathVariable Long id, @RequestParam(required = false)
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date expiration) throws Exception {
+    public ResponseEntity<?> createAuthenticationTokenForStation(@PathVariable Long id) throws Exception {
         Optional<Station> station = stationsRepository.findById(id);
-
         if (station.isEmpty()) {
             throw new Exception("Station not found");
         }
-
         final String jwt;
-//        if (expiration == null) {
-            jwt = tokenProvider.generateTokenForStation(station.get());
-//        } else {
-//            jwt = tokenProvider.generateTokenForStation(station.get(), expiration);
-//        }
+        jwt = tokenProvider.generateTokenForStation(station.get());
         return ResponseEntity.ok(new AuthenticationResponse(jwt));
     }
 
     @PostMapping("/register")
     public UserDtoResponse addUser(@RequestBody @Valid UserDtoRequest userDtoRequest) {
         User user = userAssembler.getUser(userDtoRequest);
-
-        // user.setRoles(Arrays.asList(roleRepository.findByName("USER")));
         user.setRoles(Set.of(roleRepository.findByName("USER_ROLE")));
         user.setEnabled(true);
-        user.setName("Fixme");// todo
-
+        user.setProvider("Local");
         user = userRepository.save(user);
         return userAssembler.getUserDtoResponse(user);
     }
 
     @GetMapping("/user/me")
-   /// @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<?> getCurrentUser(@CurrentUser LocalUser user) {
         return ResponseEntity.ok(GeneralUtils.buildUserInfo(user));
     }
-
 }
